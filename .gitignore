@@ -1,0 +1,12 @@
+.DS_Store
+.idea
+.svn
+.git
+node_modules
+.vscode
+!logs/.gitkeep
+logs/
+.env
+uploads/images/*
+data/*
+!./uploads/images/.gitkeep
