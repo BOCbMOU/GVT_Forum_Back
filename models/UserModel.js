@@ -7,6 +7,7 @@ const userSchema = new mongoose.Schema(
     email: { type: String, trim: true, unique: true, required: true },
     // 1 = admin, 9999 = inactive
     accessLevel: { type: Number, unique: false, required: false, min: 1, max: 9999, default: 9999 },
+    avatar: { type: String, unique: false, required: false },
     rehashedPassword: { type: String, unique: false, required: true },
   },
   { timestamps: true },
@@ -43,4 +44,11 @@ UserModel.schema
   .path('email')
   .validate(async email => !(await getUserByEmail(email)), 'Email is already in use!');
 
-export { addUser, getUserByName, getUserByEmail, getUsersByAccessLevel, comparePassword, userSchema };
+export {
+  addUser,
+  getUserByName,
+  getUserByEmail,
+  getUsersByAccessLevel,
+  comparePassword,
+  userSchema,
+};

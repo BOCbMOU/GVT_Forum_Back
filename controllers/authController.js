@@ -1,45 +1,59 @@
 import jwt from 'jsonwebtoken';
 import AppError from '../errors/AppError';
-import * as UserModel from '../models/UserModel';
+import { BASE_ACCESS_LEVEL, TOKEN_EXPIRES_IN } from '../consts';
+import { addUser, getUserByEmail, comparePassword } from '../models/UserModel';
 
 const logger = require('../utils/logger')('logController');
 
-const register = async (req, res) => {
+const signUp = async (req, res) => {
   logger.log('debug', 'register: %j', req.body);
-  await UserModel.save({
-    username: req.body.username,
-    email: req.body.email,
-    rehashedPassword: req.body.rehashedPassword,
+
+  const { username, email, rehashedPassword } = req.body;
+
+  await addUser({
+    username,
+    email,
+    accessLevel: BASE_ACCESS_LEVEL,
+    rehashedPassword,
   }).catch(error => {
     throw new AppError(error.message, 400);
   });
-  logger.log('info', `Successfully registered: ${req.body.userName}`);
+
+  logger.log('info', `Successfully registered: ${username}`);
+
   res.status(200).send({ payload: { message: 'Successfully registered' } });
 };
 
-const logIn = async (req, res) => {
+const signIn = async (req, res) => {
   logger.log('debug', 'logIn: %j', req.body);
-  const user = await UserModel.getUserByEmail(req.body.email);
+
+  const { email, hashedPassword } = req.body;
+  const user = await getUserByEmail(email);
+
   if (user) {
-    const isPasswordsEqual = await UserModel.comparePassword({
-      userPassword: req.body.hashedPassword,
+    const isPasswordsEqual = await comparePassword({
+      userPassword: hashedPassword,
       rehashedPassword: user.rehashedPassword,
     });
+
     if (isPasswordsEqual) {
       const token = jwt.sign(
-        {
-          data: { username: user.username },
-        },
+        { data: { username: user.username } },
         process.env.JWT_SECRET,
-        { expiresIn: '6h' },
+        { expiresIn: TOKEN_EXPIRES_IN },
       );
-      logger.log('info', `Successfully loged in: ${user.username}`);
+
+      logger.log('info', `Successfully logged in: ${user.username}`);
+
       res.status(200).send({ payload: { message: 'Successfully logged in', token } });
     }
+
+    logger.log('debug', 'Login failed: wrong password');
+    throw new AppError('Wrong password!', 400);
   } else {
     logger.log('debug', 'Login failed');
     throw new AppError('Wrong user credentials!', 400);
   }
 };
 
-export { register, logIn };
+export { signUp, signIn };

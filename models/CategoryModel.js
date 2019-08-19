@@ -17,6 +17,6 @@ const getCategoryById = async _id => CategoryModel.findById({ _id });
 
 const getCategoriesByName = async name => CategoryModel.find({ name });
 
-const getCategoryChildren = async id => CategoryModel.find({ parentCategoryId: id });
+const getCategoryChildren = async _id => CategoryModel.find({ parentCategoryId: _id });
 
 export { addCategory, getCategoryById, getCategoriesByName, getCategoryChildren };
