@@ -1,32 +1,87 @@
-import * as PostModel from '../models/TopicModel';
+import * as TopicModel from '../models/TopicModel';
+import { SUPER_AL, ADD_TOPIC_AL } from '../consts';
+import AppError from '../errors/AppError';
 
 const logger = require('../utils/logger')('logController');
 
-const addPost = async (req, res) => {
-  logger.log('info', 'addPost: %j', req.body);
-  const { user, body } = req;
-  const { category } = await CategoryModel.getCategoryByID(body.categoryID);
-  const post = await PostModel.save({
-    title: req.body.caption,
-    username: user.username,
-    media: {
-      category,
-      categoryID: req.body.categoryID,
-    },
-  });
-  res.status(200).send({ payload: post });
+const addTopic = async (req, res, next) => {
+  try {
+    const { user, body } = req;
+
+    logger.log('info', 'addTopic: %j', { body, user });
+
+    if (user.accessLevel > ADD_TOPIC_AL) {
+      res.status(403).send('Low access level!');
+      return;
+    }
+
+    const { username } = user;
+    const { title, categoryId, viewAccessLevel = SUPER_AL } = body;
+
+    if (!(title && categoryId)) {
+      res.status(400).send('No data provided!');
+      return;
+    }
+
+    const topic = await TopicModel.addTopic({ title, username, categoryId, viewAccessLevel });
+
+    // TODO: add topic top comment
+
+    res.status(200).send({ payload: { topic } });
+  } catch (err) {
+    next(new AppError(err.message, 400));
+  }
 };
 
-const getPosts = async (req, res) => {
-  logger.log('info', 'getPosts: %j', req.body);
-  const posts = await PostModel.getRandomPosts();
-  res.status(200).send({ payload: posts || [] });
+const getTopicById = async (req, res, next) => {
+  try {
+    const { user, body } = req;
+
+    logger.log('info', 'getTopicById: %j', { body, user });
+
+    const { _id } = body;
+    const topic = await TopicModel.getTopicById(_id, user.accessLevel);
+
+    res.status(200).send({ payload: { topic } });
+  } catch (err) {
+    next(new AppError(err.message, 400));
+  }
 };
 
-const getPostById = async (req, res) => {
-  logger.log('info', 'getPostById: %j', req.body);
-  const post = await PostModel.getPostById(req.params.mediaId);
-  res.status(200).send({ payload: post });
+const getTopicsByUser = async (req, res, next) => {
+  try {
+    const { user, body } = req;
+
+    logger.log('info', 'getTopicsByUser: %j', { body, user });
+
+    const { accessLevel } = user;
+    const { username, page } = body;
+    const { skip, limit } = page;
+    const topics = await TopicModel.getTopicsByUser(username, accessLevel, { skip, limit });
+
+    res.status(200).send({ payload: { topics } });
+  } catch (err) {
+    next(new AppError(err.message, 400));
+  }
 };
 
-export { getPosts, addPost, attachMedia, getPostById };
+const getTopicsByCategoryId = async (req, res, next) => {
+  try {
+    const { user, body } = req;
+
+    logger.log('info', 'getTopicsByCategoryId: %j', { body, user });
+
+    const { categoryId, page } = body;
+    const { skip, limit } = page;
+    const topics = await TopicModel.getTopicsByCategoryId(categoryId, user.accessLevel, {
+      skip,
+      limit,
+    });
+
+    res.status(200).send({ payload: { topics } });
+  } catch (err) {
+    next(new AppError(err.message, 400));
+  }
+};
+
+export { addTopic, getTopicById, getTopicsByUser, getTopicsByCategoryId };

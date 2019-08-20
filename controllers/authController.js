@@ -1,6 +1,6 @@
 import jwt from 'jsonwebtoken';
 import AppError from '../errors/AppError';
-import { BASE_ACCESS_LEVEL, TOKEN_EXPIRES_IN } from '../consts';
+import { BASE_USER_AL, TOKEN_EXPIRES_IN } from '../consts';
 import { addUser, getUserByEmail, comparePassword } from '../models/UserModel';
 
 const logger = require('../utils/logger')('logController');
@@ -13,7 +13,7 @@ const signUp = async (req, res) => {
   await addUser({
     username,
     email,
-    accessLevel: BASE_ACCESS_LEVEL,
+    accessLevel: BASE_USER_AL,
     rehashedPassword,
   }).catch(error => {
     throw new AppError(error.message, 400);
@@ -37,11 +37,9 @@ const signIn = async (req, res) => {
     });
 
     if (isPasswordsEqual) {
-      const token = jwt.sign(
-        { data: { username: user.username } },
-        process.env.JWT_SECRET,
-        { expiresIn: TOKEN_EXPIRES_IN },
-      );
+      const token = jwt.sign({ data: { username: user.username } }, process.env.JWT_SECRET, {
+        expiresIn: TOKEN_EXPIRES_IN,
+      });
 
       logger.log('info', `Successfully logged in: ${user.username}`);
 

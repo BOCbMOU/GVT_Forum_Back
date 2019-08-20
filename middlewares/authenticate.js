@@ -22,6 +22,8 @@ const authenticate = async (req, res, next) => {
     return next(new AuthError('No token provided'));
   }
 
+  // TODO: do unauthorized access
+
   const decodedToken = await jwtVerify(token);
 
   if (!(decodedToken && decodedToken.data && decodedToken.data.username)) {

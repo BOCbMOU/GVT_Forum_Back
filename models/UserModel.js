@@ -5,7 +5,7 @@ const userSchema = new mongoose.Schema(
   {
     username: { type: String, trim: true, unique: true, required: true },
     email: { type: String, trim: true, unique: true, required: true },
-    // 1 = admin, 9999 = inactive
+    // 1 = admin, 9999 = unauthorized
     accessLevel: { type: Number, unique: false, required: false, min: 1, max: 9999, default: 9999 },
     avatar: { type: String, unique: false, required: false },
     rehashedPassword: { type: String, unique: false, required: true },
@@ -31,7 +31,8 @@ const getUserByName = async username => UserModel.findOne({ username });
 
 const getUserByEmail = async email => UserModel.findOne({ email });
 
-const getUsersByAccessLevel = async accessLevel => UserModel.find({ accessLevel });
+const getUsersByAccessLevel = async (accessLevel, { skip, limit }) =>
+  UserModel.find({ accessLevel }, null, { skip, limit });
 
 const comparePassword = async ({ userPassword, rehashedPassword }) =>
   compare(userPassword, rehashedPassword);

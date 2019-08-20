@@ -1,11 +1,19 @@
 import mongoose from 'mongoose';
+import { SUPER_AL } from '../consts';
 
 const commentSchema = new mongoose.Schema(
   {
     message: { type: String, required: true, unique: false, trim: true },
     username: { type: String, required: true, unique: false },
     topicId: { type: String, required: true, unique: false },
-    isTop: { type: Boolean, required: false, unique: false, default: false },
+    viewAccessLevel: {
+      type: Number,
+      unique: false,
+      required: false,
+      min: 1,
+      max: 9999,
+      default: SUPER_AL,
+    },
   },
   { timestamps: true },
 );
@@ -14,14 +22,25 @@ const CommentModel = mongoose.model('Comment', commentSchema);
 
 const addComment = async model => new CommentModel(model).save();
 
-const getCommentById = async _id => CommentModel.findById({ _id });
+const getCommentById = async (_id, viewAccessLevel) =>
+  CommentModel.findOne({ _id, viewAccessLevel: { $lte: viewAccessLevel } });
 
-const getTopCommentByTopic = async _id => CommentModel.findOne({ _id, isTop: true });
+const getTopCommentByTopic = async (topicId, viewAccessLevel) =>
+  CommentModel.findOne({ topicId, viewAccessLevel: { $lte: viewAccessLevel } });
 
-const getCommentsByTopic = async (id, skip = 0, limit = 20) =>
-  CommentModel.find({ topicId: id }, null, { skip, limit });
+const getCommentsByTopicId = async (topicId, viewAccessLevel, { skip, limit }) =>
+  CommentModel.find({ topicId, viewAccessLevel: { $lte: viewAccessLevel } }, null, { skip, limit });
 
-const getCommentsByUser = async (username, skip = 0, limit = 20) =>
-  CommentModel.find({ username }, null, { skip, limit });
+const getCommentsByUser = async (username, viewAccessLevel, { skip, limit }) =>
+  CommentModel.find({ username, viewAccessLevel: { $lte: viewAccessLevel } }, null, {
+    skip,
+    limit,
+  });
 
-export { addComment, getCommentById, getTopCommentByTopic, getCommentsByTopic, getCommentsByUser };
+export {
+  addComment,
+  getCommentById,
+  getTopCommentByTopic,
+  getCommentsByTopicId,
+  getCommentsByUser,
+};

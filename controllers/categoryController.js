@@ -1,5 +1,5 @@
 import * as CategoryModel from '../models/CategoryModel';
-import { WORK_WITH_CATEGORIES_ACCESS_LEVEL } from '../consts';
+import { SUPER_AL, ADD_CATEGORY_AL } from '../consts';
 import AppError from '../errors/AppError';
 
 const logger = require('../utils/logger')('logController');
@@ -8,16 +8,24 @@ const addCategory = async (req, res, next) => {
   try {
     const { user, body } = req;
 
-    logger.log('info', 'addCategory: %j', body);
+    logger.log('info', 'addCategory: %j', { body, user });
 
-    if (user.accessLevel > WORK_WITH_CATEGORIES_ACCESS_LEVEL) {
-      return res.status(403).send('Low access level!');
+    if (user.accessLevel > ADD_CATEGORY_AL) {
+      res.status(403).send('Low access level!');
+      return;
     }
 
-    const { name, description, parentCategoryId = null } = body;
+    const { name, description = null, viewAccessLevel = SUPER_AL, parentCategoryId = null } = body;
+
+    if (!name) {
+      res.status(400).send('No data provided!');
+      return;
+    }
+
     const category = await CategoryModel.addCategory({
       name,
       description,
+      viewAccessLevel,
       parentCategoryId,
     });
 
@@ -29,34 +37,50 @@ const addCategory = async (req, res, next) => {
 
 const getCategoryById = async (req, res, next) => {
   try {
-    const { body } = req;
+    const { user, body } = req;
 
-    logger.log('info', 'addCategory: %j', body);
+    logger.log('info', 'getCategoryById: %j', { body, user });
 
     const { _id } = body;
-    const category = await CategoryModel.getCategoryById(_id);
-
-    if (!category) {
-      return res.status(404).send('Unknown category!');
-    }
+    const category = await CategoryModel.getCategoryById(_id, user.accessLevel);
 
     res.status(200).send({ payload: { category } });
   } catch (err) {
     next(new AppError(err.message, 400));
   }
 };
+
+const getTopCategories = async (req, res, next) => {
+  try {
+    const { user, body } = req;
+
+    logger.log('info', 'getTopCategories: %j', { body, user });
+
+    const { page } = body;
+    const { skip, limit } = page;
+    const categories = await CategoryModel.getTopCategories(user.accessLevel, {
+      skip,
+      limit,
+    });
+
+    res.status(200).send({ payload: { categories } });
+  } catch (err) {
+    next(new AppError(err.message, 400));
+  }
+};
+
 const getCategoriesByName = async (req, res, next) => {
   try {
-    const { body } = req;
+    const { user, body } = req;
 
-    logger.log('info', 'addCategory: %j', body);
+    logger.log('info', 'getCategoriesByName: %j', { body, user });
 
-    const { name } = body;
-    const categories = await CategoryModel.getCategoriesByName(name);
-
-    if (!categories) {
-      return res.status(404).send('Unknown category name!');
-    }
+    const { name, page } = body;
+    const { skip, limit } = page;
+    const categories = await CategoryModel.getCategoriesByName(name, user.accessLevel, {
+      skip,
+      limit,
+    });
 
     res.status(200).send({ payload: { categories } });
   } catch (err) {
@@ -66,16 +90,16 @@ const getCategoriesByName = async (req, res, next) => {
 
 const getCategoryChildren = async (req, res, next) => {
   try {
-    const { body } = req;
+    const { user, body } = req;
 
-    logger.log('info', 'addCategory: %j', body);
+    logger.log('info', 'getCategoryChildren: %j', { body, user });
 
-    const { _id } = body;
-    const categories = await CategoryModel.getCategoryChildren(_id);
-
-    if (!categories) {
-      return res.status(404).send('Unknown category!');
-    }
+    const { _id, page } = body;
+    const { skip, limit } = page;
+    const categories = await CategoryModel.getCategoryChildren(_id, user.accessLevel, {
+      skip,
+      limit,
+    });
 
     res.status(200).send({ payload: { categories } });
   } catch (err) {
@@ -83,4 +107,4 @@ const getCategoryChildren = async (req, res, next) => {
   }
 };
 
-export { addCategory, getCategoryById, getCategoriesByName, getCategoryChildren };
+export { addCategory, getCategoryById, getTopCategories, getCategoriesByName, getCategoryChildren };
