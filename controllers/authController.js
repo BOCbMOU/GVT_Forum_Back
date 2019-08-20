@@ -44,6 +44,7 @@ const signIn = async (req, res) => {
       logger.log('info', `Successfully logged in: ${user.username}`);
 
       res.status(200).send({ payload: { message: 'Successfully logged in', token } });
+      return;
     }
 
     logger.log('debug', 'Login failed: wrong password');

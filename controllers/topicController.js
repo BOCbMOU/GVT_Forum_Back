@@ -57,7 +57,7 @@ const getTopicsByUser = async (req, res, next) => {
     logger.log('info', 'getTopicsByUser: %j', { body, user });
 
     const { accessLevel } = user;
-    const { page } = body;
+    const { page = {} } = body;
     const { skip = 0, limit = 20 } = page;
     const topics = await TopicModel.getTopicsByUser(username, accessLevel, { skip, limit });
 
@@ -74,7 +74,7 @@ const getTopicsByCategoryId = async (req, res, next) => {
 
     logger.log('info', 'getTopicsByCategoryId: %j', { categoryId, user });
 
-    const { page } = body;
+    const { page = {} } = body;
     const { skip = 0, limit = 20 } = page;
     const topics = await TopicModel.getTopicsByCategoryId(categoryId, user.accessLevel, {
       skip,

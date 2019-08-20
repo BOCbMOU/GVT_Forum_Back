@@ -56,7 +56,7 @@ const getTopCategories = async (req, res, next) => {
 
     logger.log('info', 'getTopCategories: %j', { body, user });
 
-    const { page } = body;
+    const { page = {} } = body;
     const { skip = 0, limit = 20 } = page;
     const categories = await CategoryModel.getTopCategories(user.accessLevel, {
       skip,
@@ -75,7 +75,7 @@ const getCategoriesByName = async (req, res, next) => {
 
     logger.log('info', 'getCategoriesByName: %j', { body, user });
 
-    const { name, page } = body;
+    const { name, page = {} } = body;
     const { skip = 0, limit = 20 } = page;
     const categories = await CategoryModel.getCategoriesByName(name, user.accessLevel, {
       skip,
@@ -95,7 +95,7 @@ const getCategoryChildren = async (req, res, next) => {
 
     logger.log('info', 'getCategoryChildren: %j', { categoryId, user });
 
-    const { page } = body;
+    const { page = {} } = body;
     const { skip = 0, limit = 20 } = page;
     const categories = await CategoryModel.getCategoryChildren(categoryId, user.accessLevel, {
       skip,

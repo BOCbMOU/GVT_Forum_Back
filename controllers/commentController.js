@@ -59,7 +59,7 @@ const getTopCommentByTopicId = async (req, res, next) => {
 
     logger.log('info', 'getTopCommentByTopicId: %j', { body, user });
 
-    const { page } = body;
+    const { page = {} } = body;
     const { skip = 0, limit = 20 } = page;
     const comments = await CommentModel.getTopCommentByTopicId(topicId, user.accessLevel, {
       skip,
@@ -79,7 +79,7 @@ const getCommentsByTopicId = async (req, res, next) => {
 
     logger.log('info', 'getCommentsByTopicId: %j', { topicId, user });
 
-    const { page } = body;
+    const { page = {} } = body;
     const { skip = 0, limit = 20 } = page;
     const comments = await CommentModel.getCommentsByTopicId(topicId, user.accessLevel, {
       skip,
@@ -100,7 +100,7 @@ const getCommentsByUser = async (req, res, next) => {
     logger.log('info', 'getCommentsByUser: %j', { body, user });
 
     const { accessLevel } = user;
-    const { page } = body;
+    const { page = {} } = body;
     const { skip = 0, limit = 20 } = page;
     const comments = await CommentModel.getCommentsByUser(username, accessLevel, {
       skip,
