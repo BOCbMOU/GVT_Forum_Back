@@ -25,7 +25,7 @@ const addComment = async model => new CommentModel(model).save();
 const getCommentById = async (_id, viewAccessLevel) =>
   CommentModel.findOne({ _id, viewAccessLevel: { $lte: viewAccessLevel } });
 
-const getTopCommentByTopic = async (topicId, viewAccessLevel) =>
+const getTopCommentByTopicId = async (topicId, viewAccessLevel) =>
   CommentModel.findOne({ topicId, viewAccessLevel: { $lte: viewAccessLevel } });
 
 const getCommentsByTopicId = async (topicId, viewAccessLevel, { skip, limit }) =>
@@ -40,7 +40,7 @@ const getCommentsByUser = async (username, viewAccessLevel, { skip, limit }) =>
 export {
   addComment,
   getCommentById,
-  getTopCommentByTopic,
+  getTopCommentByTopicId,
   getCommentsByTopicId,
   getCommentsByUser,
 };

@@ -16,7 +16,8 @@ const addComment = async (req, res, next) => {
     }
 
     const { username } = user;
-    const { message, topicId, viewAccessLevel = SUPER_AL } = body;
+    const { message, viewAccessLevel = SUPER_AL } = body;
+    const topicId = body.topicId || req.params.topicId;
 
     if (!(message && topicId)) {
       res.status(400).send('No data provided!');
@@ -51,15 +52,16 @@ const getCommentById = async (req, res, next) => {
   }
 };
 
-const getTopCommentByTopic = async (req, res, next) => {
+const getTopCommentByTopicId = async (req, res, next) => {
   try {
-    const { user, body } = req;
+    const { user, body, params } = req;
+    const { topicId } = params;
 
-    logger.log('info', 'getTopCommentByTopic: %j', { body, user });
+    logger.log('info', 'getTopCommentByTopicId: %j', { body, user });
 
-    const { topicId, page } = body;
-    const { skip, limit } = page;
-    const comments = await CommentModel.getTopCommentByTopic(topicId, user.accessLevel, {
+    const { page } = body;
+    const { skip = 0, limit = 20 } = page;
+    const comments = await CommentModel.getTopCommentByTopicId(topicId, user.accessLevel, {
       skip,
       limit,
     });
@@ -72,12 +74,13 @@ const getTopCommentByTopic = async (req, res, next) => {
 
 const getCommentsByTopicId = async (req, res, next) => {
   try {
-    const { user, body } = req;
+    const { user, body, params } = req;
+    const { topicId } = params;
 
-    logger.log('info', 'getCommentsByTopicId: %j', { body, user });
+    logger.log('info', 'getCommentsByTopicId: %j', { topicId, user });
 
-    const { topicId, page } = body;
-    const { skip, limit } = page;
+    const { page } = body;
+    const { skip = 0, limit = 20 } = page;
     const comments = await CommentModel.getCommentsByTopicId(topicId, user.accessLevel, {
       skip,
       limit,
@@ -91,13 +94,14 @@ const getCommentsByTopicId = async (req, res, next) => {
 
 const getCommentsByUser = async (req, res, next) => {
   try {
-    const { user, body } = req;
+    const { user, body, params } = req;
+    const { username } = params;
 
     logger.log('info', 'getCommentsByUser: %j', { body, user });
 
-    const { username, accessLevel } = user;
+    const { accessLevel } = user;
     const { page } = body;
-    const { skip, limit } = page;
+    const { skip = 0, limit = 20 } = page;
     const comments = await CommentModel.getCommentsByUser(username, accessLevel, {
       skip,
       limit,
@@ -112,7 +116,7 @@ const getCommentsByUser = async (req, res, next) => {
 export {
   addComment,
   getCommentById,
-  getTopCommentByTopic,
+  getTopCommentByTopicId,
   getCommentsByTopicId,
   getCommentsByUser,
 };

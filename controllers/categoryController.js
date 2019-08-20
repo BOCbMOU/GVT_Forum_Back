@@ -37,12 +37,12 @@ const addCategory = async (req, res, next) => {
 
 const getCategoryById = async (req, res, next) => {
   try {
-    const { user, body } = req;
+    const { user, params } = req;
+    const { categoryId } = params;
 
-    logger.log('info', 'getCategoryById: %j', { body, user });
+    logger.log('info', 'getCategoryById: %j', { categoryId, user });
 
-    const { _id } = body;
-    const category = await CategoryModel.getCategoryById(_id, user.accessLevel);
+    const category = await CategoryModel.getCategoryById(categoryId, user.accessLevel);
 
     res.status(200).send({ payload: { category } });
   } catch (err) {
@@ -57,7 +57,7 @@ const getTopCategories = async (req, res, next) => {
     logger.log('info', 'getTopCategories: %j', { body, user });
 
     const { page } = body;
-    const { skip, limit } = page;
+    const { skip = 0, limit = 20 } = page;
     const categories = await CategoryModel.getTopCategories(user.accessLevel, {
       skip,
       limit,
@@ -76,7 +76,7 @@ const getCategoriesByName = async (req, res, next) => {
     logger.log('info', 'getCategoriesByName: %j', { body, user });
 
     const { name, page } = body;
-    const { skip, limit } = page;
+    const { skip = 0, limit = 20 } = page;
     const categories = await CategoryModel.getCategoriesByName(name, user.accessLevel, {
       skip,
       limit,
@@ -90,13 +90,14 @@ const getCategoriesByName = async (req, res, next) => {
 
 const getCategoryChildren = async (req, res, next) => {
   try {
-    const { user, body } = req;
+    const { user, body, params } = req;
+    const { categoryId } = params;
 
-    logger.log('info', 'getCategoryChildren: %j', { body, user });
+    logger.log('info', 'getCategoryChildren: %j', { categoryId, user });
 
-    const { _id, page } = body;
-    const { skip, limit } = page;
-    const categories = await CategoryModel.getCategoryChildren(_id, user.accessLevel, {
+    const { page } = body;
+    const { skip = 0, limit = 20 } = page;
+    const categories = await CategoryModel.getCategoryChildren(categoryId, user.accessLevel, {
       skip,
       limit,
     });

@@ -4,11 +4,11 @@ import bodyParser from 'body-parser';
 import cors from 'cors';
 import connectToDB from './utils/mongoConnection';
 import './utils/dotenv';
+import indexRouter from './routes/index';
 import authRouter from './routes/auth';
-import user from './routes/user';
-import category from './routes/category';
-import post from './routes/post';
-import index from './routes/index';
+import userRouter from './routes/user';
+import categoryRouter from './routes/category';
+import topicRouter from './routes/topic';
 import authenticate from './middlewares/authenticate';
 import defaultErrorHandler from './middlewares/defaultErrorHandler';
 
@@ -34,13 +34,13 @@ app.use(
   }),
 );
 
+app.use(`/api/v${process.env.API_VERSION}`, indexRouter);
 app.use(`/api/v${process.env.API_VERSION}/auth`, authRouter);
-app.use(`/api/v${process.env.API_VERSION}/users`, authenticate, user);
-app.use(`/api/v${process.env.API_VERSION}/category`, authenticate, category);
-app.use(`/api/v${process.env.API_VERSION}/posts`, authenticate, post);
-app.use(`/api/v${process.env.API_VERSION}`, index);
+app.use(`/api/v${process.env.API_VERSION}/users`, authenticate, userRouter);
+app.use(`/api/v${process.env.API_VERSION}/categories`, authenticate, categoryRouter);
+app.use(`/api/v${process.env.API_VERSION}/topic`, authenticate, topicRouter);
 
-app.use('/uploads', express.static('uploads'));
+// app.use('/uploads', express.static('uploads'));
 app.use(defaultErrorHandler);
 
 const host = process.env[`HOST_${process.platform.toUpperCase()}`];

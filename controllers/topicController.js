@@ -6,9 +6,10 @@ const logger = require('../utils/logger')('logController');
 
 const addTopic = async (req, res, next) => {
   try {
-    const { user, body } = req;
+    const { user, body, params } = req;
+    const { categoryId } = params;
 
-    logger.log('info', 'addTopic: %j', { body, user });
+    logger.log('info', 'addTopic: %j', { body, categoryId, user });
 
     if (user.accessLevel > ADD_TOPIC_AL) {
       res.status(403).send('Low access level!');
@@ -16,7 +17,7 @@ const addTopic = async (req, res, next) => {
     }
 
     const { username } = user;
-    const { title, categoryId, viewAccessLevel = SUPER_AL } = body;
+    const { title, viewAccessLevel = SUPER_AL } = body;
 
     if (!(title && categoryId)) {
       res.status(400).send('No data provided!');
@@ -50,13 +51,14 @@ const getTopicById = async (req, res, next) => {
 
 const getTopicsByUser = async (req, res, next) => {
   try {
-    const { user, body } = req;
+    const { user, body, params } = req;
+    const { username } = params;
 
     logger.log('info', 'getTopicsByUser: %j', { body, user });
 
     const { accessLevel } = user;
-    const { username, page } = body;
-    const { skip, limit } = page;
+    const { page } = body;
+    const { skip = 0, limit = 20 } = page;
     const topics = await TopicModel.getTopicsByUser(username, accessLevel, { skip, limit });
 
     res.status(200).send({ payload: { topics } });
@@ -67,12 +69,13 @@ const getTopicsByUser = async (req, res, next) => {
 
 const getTopicsByCategoryId = async (req, res, next) => {
   try {
-    const { user, body } = req;
+    const { user, body, params } = req;
+    const { categoryId } = params;
 
-    logger.log('info', 'getTopicsByCategoryId: %j', { body, user });
+    logger.log('info', 'getTopicsByCategoryId: %j', { categoryId, user });
 
-    const { categoryId, page } = body;
-    const { skip, limit } = page;
+    const { page } = body;
+    const { skip = 0, limit = 20 } = page;
     const topics = await TopicModel.getTopicsByCategoryId(categoryId, user.accessLevel, {
       skip,
       limit,

@@ -1,11 +1,11 @@
 import express from 'express';
 
 import asyncMiddleware from '../middlewares/asyncMiddleware';
-import { register, logIn } from '../controllers/authController';
+import { signUp, signIn } from '../controllers/authController';
 
 const router = express.Router();
 
-router.post('/users', asyncMiddleware(register));
-router.post('/session', asyncMiddleware(logIn));
+router.post('/sign-up', asyncMiddleware(signUp));
+router.post('/sign-in', asyncMiddleware(signIn));
 
 export default router;

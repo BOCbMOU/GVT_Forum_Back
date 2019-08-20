@@ -13,11 +13,10 @@ const getSelf = async (req, res) => {
 
 const getUserByName = async (req, res, next) => {
   try {
-    const { body } = req;
+    const { username } = req.params;
 
-    logger.log('info', 'getUserByName: %j', { body });
+    logger.log('info', 'getUserByName: %j', { username });
 
-    const { username } = body;
     const user = await UserModel.getUserByName(username);
 
     res.status(200).send({ payload: { user } });
@@ -43,12 +42,13 @@ const getUserByEmail = async (req, res, next) => {
 
 const getUsersByAccessLevel = async (req, res, next) => {
   try {
-    const { body } = req;
+    const { body, params } = req;
+    const { accessLevel } = params;
 
     logger.log('info', 'getUsersByAccessLevel: %j', { body });
 
-    const { accessLevel, page } = body;
-    const { skip, limit } = page;
+    const { page } = body;
+    const { skip = 0, limit = 20 } = page;
     const user = await UserModel.getUsersByAccessLevel(accessLevel, {
       skip,
       limit,
