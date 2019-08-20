@@ -22,17 +22,17 @@ const CommentModel = mongoose.model('Comment', commentSchema);
 
 const addComment = async model => new CommentModel(model).save();
 
-const getCommentById = async (_id, viewAccessLevel) =>
-  CommentModel.findOne({ _id, viewAccessLevel: { $lte: viewAccessLevel } });
+const getCommentById = async (_id, userAccessLevel) =>
+  CommentModel.findOne({ _id, viewAccessLevel: { $gte: userAccessLevel } });
 
-const getTopCommentByTopicId = async (topicId, viewAccessLevel) =>
-  CommentModel.findOne({ topicId, viewAccessLevel: { $lte: viewAccessLevel } });
+const getTopCommentByTopicId = async (topicId, userAccessLevel) =>
+  CommentModel.findOne({ topicId, viewAccessLevel: { $gte: userAccessLevel } });
 
-const getCommentsByTopicId = async (topicId, viewAccessLevel, { skip, limit }) =>
-  CommentModel.find({ topicId, viewAccessLevel: { $lte: viewAccessLevel } }, null, { skip, limit });
+const getCommentsByTopicId = async (topicId, userAccessLevel, { skip, limit }) =>
+  CommentModel.find({ topicId, viewAccessLevel: { $gte: userAccessLevel } }, null, { skip, limit });
 
-const getCommentsByUser = async (username, viewAccessLevel, { skip, limit }) =>
-  CommentModel.find({ username, viewAccessLevel: { $lte: viewAccessLevel } }, null, {
+const getCommentsByUser = async (username, userAccessLevel, { skip, limit }) =>
+  CommentModel.find({ username, viewAccessLevel: { $gte: userAccessLevel } }, null, {
     skip,
     limit,
   });

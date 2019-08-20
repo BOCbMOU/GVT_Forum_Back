@@ -22,14 +22,14 @@ const TopicModel = mongoose.model('Topic', topicSchema);
 
 const addTopic = async model => new TopicModel(model).save();
 
-const getTopicById = async (_id, viewAccessLevel) =>
-  TopicModel.findOne({ _id, viewAccessLevel: { $lte: viewAccessLevel } });
+const getTopicById = async (_id, userAccessLevel) =>
+  TopicModel.findOne({ _id, viewAccessLevel: { $gte: userAccessLevel } });
 
-const getTopicsByUser = async (username, viewAccessLevel, { skip, limit }) =>
-  TopicModel.find({ username, viewAccessLevel: { $lte: viewAccessLevel } }, null, { skip, limit });
+const getTopicsByUser = async (username, userAccessLevel, { skip, limit }) =>
+  TopicModel.find({ username, viewAccessLevel: { $gte: userAccessLevel } }, null, { skip, limit });
 
-const getTopicsByCategoryId = async (categoryId, viewAccessLevel, { skip, limit }) =>
-  TopicModel.find({ categoryId, viewAccessLevel: { $lte: viewAccessLevel } }, null, {
+const getTopicsByCategoryId = async (categoryId, userAccessLevel, { skip, limit }) =>
+  TopicModel.find({ categoryId, viewAccessLevel: { $gte: userAccessLevel } }, null, {
     skip,
     limit,
   });

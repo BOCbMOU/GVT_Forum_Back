@@ -22,20 +22,20 @@ const CategoryModel = mongoose.model('Category', categorySchema);
 
 const addCategory = async model => new CategoryModel(model).save();
 
-const getCategoryById = async (_id, viewAccessLevel) =>
-  CategoryModel.findOne({ _id, viewAccessLevel: { $lte: viewAccessLevel } });
+const getCategoryById = async (_id, userAccessLevel) =>
+  CategoryModel.findOne({ _id, viewAccessLevel: { $gte: userAccessLevel } });
 
-const getTopCategories = async (viewAccessLevel, { skip, limit }) =>
-  CategoryModel.find({ parentCategoryId: null, viewAccessLevel: { $lte: viewAccessLevel } }, null, {
+const getTopCategories = async (userAccessLevel, { skip, limit }) =>
+  CategoryModel.find({ parentCategoryId: null, viewAccessLevel: { $gte: userAccessLevel } }, null, {
     skip,
     limit,
   });
 
-const getCategoriesByName = async (name, viewAccessLevel, { skip, limit }) =>
-  CategoryModel.find({ name, viewAccessLevel: { $lte: viewAccessLevel } }, null, { skip, limit });
+const getCategoriesByName = async (name, userAccessLevel, { skip, limit }) =>
+  CategoryModel.find({ name, viewAccessLevel: { $gte: userAccessLevel } }, null, { skip, limit });
 
-const getCategoryChildren = async (parentCategoryId, viewAccessLevel, { skip, limit }) =>
-  CategoryModel.find({ parentCategoryId, viewAccessLevel: { $lte: viewAccessLevel } }, null, {
+const getCategoryChildren = async (parentCategoryId, userAccessLevel, { skip, limit }) =>
+  CategoryModel.find({ parentCategoryId, viewAccessLevel: { $gte: userAccessLevel } }, null, {
     skip,
     limit,
   });

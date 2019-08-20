@@ -28,7 +28,7 @@ const addTopic = async (req, res, next) => {
 
     // TODO: add topic top comment
 
-    res.status(200).send({ payload: { topic } });
+    res.status(201).send({ payload: { topic } });
   } catch (err) {
     next(new AppError(err.message, 400));
   }
@@ -36,12 +36,12 @@ const addTopic = async (req, res, next) => {
 
 const getTopicById = async (req, res, next) => {
   try {
-    const { user, body } = req;
+    const { user, params } = req;
+    const { topicId } = params;
 
-    logger.log('info', 'getTopicById: %j', { body, user });
+    logger.log('info', 'getTopicById: %j', { topicId, user: user.username });
 
-    const { _id } = body;
-    const topic = await TopicModel.getTopicById(_id, user.accessLevel);
+    const topic = await TopicModel.getTopicById(topicId, user.accessLevel);
 
     res.status(200).send({ payload: { topic } });
   } catch (err) {

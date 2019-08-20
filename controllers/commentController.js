@@ -8,7 +8,7 @@ const addComment = async (req, res, next) => {
   try {
     const { user, body } = req;
 
-    logger.log('info', 'addComment: %j', { body, user });
+    logger.log('info', 'addComment: %j', { body, user: user.username });
 
     if (user.accessLevel > ADD_COMMENT_AL) {
       res.status(403).send('Low access level!');
@@ -31,7 +31,7 @@ const addComment = async (req, res, next) => {
       viewAccessLevel,
     });
 
-    res.status(200).send({ payload: { comment } });
+    res.status(201).send({ payload: { comment } });
   } catch (err) {
     next(new AppError(err.message, 400));
   }
@@ -41,7 +41,7 @@ const getCommentById = async (req, res, next) => {
   try {
     const { user, body } = req;
 
-    logger.log('info', 'getCommentById: %j', { body, user });
+    logger.log('info', 'getCommentById: %j', { body, user: user.username });
 
     const { _id } = body;
     const comment = await CommentModel.getCommentById(_id, user.accessLevel);
@@ -57,7 +57,7 @@ const getTopCommentByTopicId = async (req, res, next) => {
     const { user, body, params } = req;
     const { topicId } = params;
 
-    logger.log('info', 'getTopCommentByTopicId: %j', { body, user });
+    logger.log('info', 'getTopCommentByTopicId: %j', { body, user: user.username });
 
     const { page = {} } = body;
     const { skip = 0, limit = 20 } = page;
@@ -77,7 +77,7 @@ const getCommentsByTopicId = async (req, res, next) => {
     const { user, body, params } = req;
     const { topicId } = params;
 
-    logger.log('info', 'getCommentsByTopicId: %j', { topicId, user });
+    logger.log('info', 'getCommentsByTopicId: %j', { topicId, user: user.username });
 
     const { page = {} } = body;
     const { skip = 0, limit = 20 } = page;
@@ -97,7 +97,7 @@ const getCommentsByUser = async (req, res, next) => {
     const { user, body, params } = req;
     const { username } = params;
 
-    logger.log('info', 'getCommentsByUser: %j', { body, user });
+    logger.log('info', 'getCommentsByUser: %j', { body, user: user.username });
 
     const { accessLevel } = user;
     const { page = {} } = body;

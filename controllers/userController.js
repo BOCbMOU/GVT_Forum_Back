@@ -8,7 +8,7 @@ const getSelf = async (req, res) => {
   const { user } = req;
   const { _id, username, email, createdAt } = user;
 
-  res.status(200).send({ payload: { _id, email, username, createdAt } });
+  res.status(200).send({ payload: { _id, username, email, createdAt } });
 };
 
 const getUserByName = async (req, res, next) => {
@@ -47,7 +47,7 @@ const getUsersByAccessLevel = async (req, res, next) => {
 
     logger.log('info', 'getUsersByAccessLevel: %j', { body });
 
-    const { page } = body;
+    const { page = {} } = body;
     const { skip = 0, limit = 20 } = page;
     const user = await UserModel.getUsersByAccessLevel(accessLevel, {
       skip,

@@ -8,7 +8,7 @@ const addCategory = async (req, res, next) => {
   try {
     const { user, body } = req;
 
-    logger.log('info', 'addCategory: %j', { body, user });
+    logger.log('info', 'addCategory: %j', { body, user: user.username });
 
     if (user.accessLevel > ADD_CATEGORY_AL) {
       res.status(403).send('Low access level!');
@@ -40,7 +40,7 @@ const getCategoryById = async (req, res, next) => {
     const { user, params } = req;
     const { categoryId } = params;
 
-    logger.log('info', 'getCategoryById: %j', { categoryId, user });
+    logger.log('info', 'getCategoryById: %j', { categoryId, user: user.username });
 
     const category = await CategoryModel.getCategoryById(categoryId, user.accessLevel);
 
@@ -54,7 +54,7 @@ const getTopCategories = async (req, res, next) => {
   try {
     const { user, body } = req;
 
-    logger.log('info', 'getTopCategories: %j', { body, user });
+    logger.log('info', 'getTopCategories: %j', { body, user: user.username });
 
     const { page = {} } = body;
     const { skip = 0, limit = 20 } = page;
@@ -73,7 +73,7 @@ const getCategoriesByName = async (req, res, next) => {
   try {
     const { user, body } = req;
 
-    logger.log('info', 'getCategoriesByName: %j', { body, user });
+    logger.log('info', 'getCategoriesByName: %j', { body, user: user.username });
 
     const { name, page = {} } = body;
     const { skip = 0, limit = 20 } = page;
@@ -93,7 +93,7 @@ const getCategoryChildren = async (req, res, next) => {
     const { user, body, params } = req;
     const { categoryId } = params;
 
-    logger.log('info', 'getCategoryChildren: %j', { categoryId, user });
+    logger.log('info', 'getCategoryChildren: %j', { categoryId, user: user.username });
 
     const { page = {} } = body;
     const { skip = 0, limit = 20 } = page;

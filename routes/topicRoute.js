@@ -10,10 +10,10 @@ import {
 
 const router = express.Router();
 
-router.post('/:topicID/comments', asyncMiddleware(addComment));
+router.post('/:topicId/comments', asyncMiddleware(addComment));
 
-router.get('/:topicID', asyncMiddleware(getTopicById));
-router.get('/:topicID/top', asyncMiddleware(getTopCommentByTopicId));
-router.get('/:topicID/comments', asyncMiddleware(getCommentsByTopicId));
+router.get('/:topicId', asyncMiddleware(getTopicById));
+router.get('/:topicId/top', asyncMiddleware(getTopCommentByTopicId));
+router.get('/:topicId/comments', asyncMiddleware(getCommentsByTopicId));
 
 export default router;

@@ -4,11 +4,11 @@ import bodyParser from 'body-parser';
 import cors from 'cors';
 import connectToDB from './utils/mongoConnection';
 import './utils/dotenv';
-import indexRouter from './routes/index';
-import authRouter from './routes/auth';
-import userRouter from './routes/user';
-import categoryRouter from './routes/category';
-import topicRouter from './routes/topic';
+import indexRouter from './routes/indexRoute';
+import authRouter from './routes/authRoute';
+import userRouter from './routes/userRoute';
+import categoryRouter from './routes/categoryRoute';
+import topicRouter from './routes/topicRoute';
 import authenticate from './middlewares/authenticate';
 import defaultErrorHandler from './middlewares/defaultErrorHandler';
 
@@ -35,9 +35,9 @@ app.use(
 );
 
 app.use(`/api/v${process.env.API_VERSION}/auth`, authRouter);
-app.use(`/api/v${process.env.API_VERSION}/users`, authenticate, userRouter);
 app.use(`/api/v${process.env.API_VERSION}/categories`, authenticate, categoryRouter);
-app.use(`/api/v${process.env.API_VERSION}/topic`, authenticate, topicRouter);
+app.use(`/api/v${process.env.API_VERSION}/topics`, authenticate, topicRouter);
+app.use(`/api/v${process.env.API_VERSION}/users`, authenticate, userRouter);
 app.use(`/api/v${process.env.API_VERSION}`, indexRouter);
 
 // app.use('/uploads', express.static('uploads'));
