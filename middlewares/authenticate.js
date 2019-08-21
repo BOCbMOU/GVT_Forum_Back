@@ -1,6 +1,7 @@
 import jwt from 'jsonwebtoken';
 import AuthError from '../errors/AuthError';
 import { getUserByName } from '../models/UserModel';
+import { UNAUTHORIZED_USER_OBJECT } from '../consts';
 
 const logger = require('../utils/logger')('authenticate');
 
@@ -19,15 +20,15 @@ const authenticate = async (req, res, next) => {
   }
 
   if (!token) {
-    return next(new AuthError('No token provided'));
+    req.user = UNAUTHORIZED_USER_OBJECT;
+    return next();
   }
-
-  // TODO: do unauthorized access
 
   const decodedToken = await jwtVerify(token);
 
   if (!(decodedToken && decodedToken.data && decodedToken.data.username)) {
-    return next(new AuthError('Session ended'));
+    req.user = UNAUTHORIZED_USER_OBJECT;
+    return next();
   }
 
   const { username } = decodedToken.data;

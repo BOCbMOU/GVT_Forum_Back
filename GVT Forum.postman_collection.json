@@ -1,0 +1,720 @@
+{
+	"info": {
+		"_postman_id": "238be382-e022-47d1-8131-a96d03b7496e",
+		"name": "GVT Forum",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Authorization",
+			"item": [
+				{
+					"name": "Sign Up",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"username\": \"Bear\",\n    \"email\": \"bear@email.com\",\n    \"rehashedPassword\": \"Bear\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:3001/api/v1/auth/sign-up",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3001",
+							"path": [
+								"api",
+								"v1",
+								"auth",
+								"sign-up"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Sign In",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "81b64a05-c745-49fb-a67e-0d662078ff14",
+								"exec": [
+									"pm.test(\"Status code is 200\", () => {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"const jsonData = pm.response.json();",
+									"",
+									"pm.test(\"Token exist\", () => {",
+									"    pm.expect(jsonData.payload.message).to.eql('Successfully logged in');",
+									"    pm.expect(jsonData.payload).to.have.property('token');",
+									"});",
+									"",
+									"pm.environment.set(\"boot_login\", jsonData.payload.token);",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"bear@email.com\",\n    \"hashedPassword\": \"Bear\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:3001/api/v1/auth/sign-in",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3001",
+							"path": [
+								"api",
+								"v1",
+								"auth",
+								"sign-in"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Categories",
+			"item": [
+				{
+					"name": "Add Category",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "266d9824-2736-4ccf-9e2b-3bad8d642d60",
+								"exec": [
+									"pm.test(\"Status code is 201\", () => {",
+									"    pm.response.to.have.status(201);",
+									"});",
+									"",
+									"const jsonData = pm.response.json();",
+									"",
+									"pm.test(\"Correct search result\", () => {",
+									"    pm.expect(jsonData.payload).to.have.property('category');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{boot_login}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"name\": \"Main child test\",\n\t\"viewAccessLevel\": 9999,\n\t\"parentCategoryId\": \"5d5c38e7f298d525d8f9e3fb\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:3001/api/v1/categories/",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3001",
+							"path": [
+								"api",
+								"v1",
+								"categories",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Category by ID",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"type": "text",
+								"value": "Bearer {{boot_login}}"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:3001/api/v1/categories/5d5c38e7f298d525d8f9e3fb",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3001",
+							"path": [
+								"api",
+								"v1",
+								"categories",
+								"5d5c38e7f298d525d8f9e3fb"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Top Categories",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{boot_login}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:3001/api/v1/categories/",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3001",
+							"path": [
+								"api",
+								"v1",
+								"categories",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Category Children",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"type": "text",
+								"value": "Bearer {{boot_login}}"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:3001/api/v1/categories/5d5c38e7f298d525d8f9e3fb/children",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3001",
+							"path": [
+								"api",
+								"v1",
+								"categories",
+								"5d5c38e7f298d525d8f9e3fb",
+								"children"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Category Topics",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"type": "text",
+								"value": "Bearer {{boot_login}}"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:3001/api/v1/categories/5d5c38e7f298d525d8f9e3fb/topics",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3001",
+							"path": [
+								"api",
+								"v1",
+								"categories",
+								"5d5c38e7f298d525d8f9e3fb",
+								"topics"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Topics",
+			"item": [
+				{
+					"name": "Add Topic",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "c1fa5e31-39ad-4f72-bee6-e4ce154686a1",
+								"exec": [
+									"pm.test(\"Status code is 201\", () => {",
+									"    pm.response.to.have.status(201);",
+									"});",
+									"",
+									"const jsonData = pm.response.json();",
+									"",
+									"pm.test(\"Correct search result\", () => {",
+									"    pm.expect(jsonData.payload).to.have.property('topic');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{boot_login}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"title\": \"Second topic\",\n\t\"viewAccessLevel\": 9999\n}"
+						},
+						"url": {
+							"raw": "http://localhost:3001/api/v1/categories/5d5c55ee686c4912a88b3f78",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3001",
+							"path": [
+								"api",
+								"v1",
+								"categories",
+								"5d5c55ee686c4912a88b3f78"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Topic by ID",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"type": "text",
+								"value": "Bearer {{boot_login}}"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:3001/api/v1/topics/5d5c5edb4b512528f4b549e2",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3001",
+							"path": [
+								"api",
+								"v1",
+								"topics",
+								"5d5c5edb4b512528f4b549e2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Topic Top Comment",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"type": "text",
+								"value": "Bearer {{boot_login}}"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:3001/api/v1/topics/5d5c5ec44b512528f4b549e1/top",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3001",
+							"path": [
+								"api",
+								"v1",
+								"topics",
+								"5d5c5ec44b512528f4b549e1",
+								"top"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Topic Comments",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"type": "text",
+								"value": "Bearer {{boot_login}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"page\": {\n\t\t\"skip\": 0,\n\t\t\"limit\": 5\n\t}\n}"
+						},
+						"url": {
+							"raw": "http://localhost:3001/api/v1/topics/5d5c5ec44b512528f4b549e1/comments",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3001",
+							"path": [
+								"api",
+								"v1",
+								"topics",
+								"5d5c5ec44b512528f4b549e1",
+								"comments"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Comments",
+			"item": [
+				{
+					"name": "Add Comment",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "c1fa5e31-39ad-4f72-bee6-e4ce154686a1",
+								"exec": [
+									"pm.test(\"Status code is 201\", () => {",
+									"    pm.response.to.have.status(201);",
+									"});",
+									"",
+									"const jsonData = pm.response.json();",
+									"",
+									"pm.test(\"Correct search result\", () => {",
+									"    pm.expect(jsonData.payload).to.have.property('comment');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"type": "text",
+								"value": "Bearer {{boot_login}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"message\": \"Just new comment\",\n\t\"viewAccessLevel\": 9999\n}"
+						},
+						"url": {
+							"raw": "http://localhost:3001/api/v1/topics/5d5c5ec44b512528f4b549e1/comments",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3001",
+							"path": [
+								"api",
+								"v1",
+								"topics",
+								"5d5c5ec44b512528f4b549e1",
+								"comments"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Users",
+			"item": [
+				{
+					"name": "Get Self",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"type": "text",
+								"value": "Bearer {{boot_login}}"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:3001/api/v1/users/me",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3001",
+							"path": [
+								"api",
+								"v1",
+								"users",
+								"me"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get User by Username",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"type": "text",
+								"value": "Bearer {{boot_login}}"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:3001/api/v1/users/Bear",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3001",
+							"path": [
+								"api",
+								"v1",
+								"users",
+								"Bear"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get User Topics",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"type": "text",
+								"value": "Bearer {{boot_login}}"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:3001/api/v1/users/Bear/topics",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3001",
+							"path": [
+								"api",
+								"v1",
+								"users",
+								"Bear",
+								"topics"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get User Comments",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"type": "text",
+								"value": "Bearer {{boot_login}}"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:3001/api/v1/users/Bear/comments",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3001",
+							"path": [
+								"api",
+								"v1",
+								"users",
+								"Bear",
+								"comments"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"auth": {
+		"type": "bearer"
+	},
+	"variable": [
+		{
+			"id": "4b83a125-6a32-4a1b-9e37-c8d6d7e4eacd",
+			"key": "categoryId",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"id": "7303c534-4a7b-4509-ad69-2b08d2524eb6",
+			"key": "topicId",
+			"value": "",
+			"type": "string"
+		}
+	]
+}

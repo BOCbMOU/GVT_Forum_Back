@@ -9,6 +9,9 @@ const userSchema = new mongoose.Schema(
     accessLevel: { type: Number, unique: false, required: false, min: 1, max: 9999, default: 9999 },
     avatar: { type: String, unique: false, required: false },
     rehashedPassword: { type: String, unique: false, required: true },
+    settings: {
+      pageSize: { type: Number, unique: false, required: false, min: 10, max: 100, default: 20 },
+    },
   },
   { timestamps: true },
 );
@@ -26,6 +29,8 @@ userSchema.pre('save', async function callback(next) {
 const UserModel = mongoose.model('User', userSchema);
 
 const addUser = async model => new UserModel(model).save();
+
+const updateUser = async user => UserModel.findOneAndUpdate({ username: user.username }, user);
 
 const getUserByName = async username => UserModel.findOne({ username });
 
@@ -47,6 +52,7 @@ UserModel.schema
 
 export {
   addUser,
+  updateUser,
   getUserByName,
   getUserByEmail,
   getUsersByAccessLevel,

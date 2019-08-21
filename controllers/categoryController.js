@@ -1,5 +1,6 @@
 import * as CategoryModel from '../models/CategoryModel';
 import { SUPER_AL, ADD_CATEGORY_AL } from '../consts';
+import convertPage from '../utils/convertPage';
 import AppError from '../errors/AppError';
 
 const logger = require('../utils/logger')('logController');
@@ -8,7 +9,7 @@ const addCategory = async (req, res, next) => {
   try {
     const { user, body } = req;
 
-    logger.log('info', 'addCategory: %j', { body, user: user.username });
+    logger.log('info', 'addCategory: %j', { name: body.name, user: user.username });
 
     if (user.accessLevel > ADD_CATEGORY_AL) {
       res.status(403).send('Low access level!');
@@ -52,16 +53,15 @@ const getCategoryById = async (req, res, next) => {
 
 const getTopCategories = async (req, res, next) => {
   try {
-    const { user, body } = req;
+    const { user, params } = req;
+    const { page } = params;
 
-    logger.log('info', 'getTopCategories: %j', { body, user: user.username });
+    logger.log('info', 'getTopCategories: %j', { user: user.username });
 
-    const { page = {} } = body;
-    const { skip = 0, limit = 20 } = page;
-    const categories = await CategoryModel.getTopCategories(user.accessLevel, {
-      skip,
-      limit,
-    });
+    const categories = await CategoryModel.getTopCategories(
+      user.accessLevel,
+      convertPage(page, user),
+    );
 
     res.status(200).send({ payload: { categories } });
   } catch (err) {
@@ -71,16 +71,17 @@ const getTopCategories = async (req, res, next) => {
 
 const getCategoriesByName = async (req, res, next) => {
   try {
-    const { user, body } = req;
+    const { user, body, params } = req;
+    const { name } = body;
+    const { page } = params;
 
-    logger.log('info', 'getCategoriesByName: %j', { body, user: user.username });
+    logger.log('info', 'getCategoriesByName: %j', { name, user: user.username });
 
-    const { name, page = {} } = body;
-    const { skip = 0, limit = 20 } = page;
-    const categories = await CategoryModel.getCategoriesByName(name, user.accessLevel, {
-      skip,
-      limit,
-    });
+    const categories = await CategoryModel.getCategoriesByName(
+      name,
+      user.accessLevel,
+      convertPage(page, user),
+    );
 
     res.status(200).send({ payload: { categories } });
   } catch (err) {
@@ -90,17 +91,16 @@ const getCategoriesByName = async (req, res, next) => {
 
 const getCategoryChildren = async (req, res, next) => {
   try {
-    const { user, body, params } = req;
-    const { categoryId } = params;
+    const { user, params } = req;
+    const { categoryId, page } = params;
 
     logger.log('info', 'getCategoryChildren: %j', { categoryId, user: user.username });
 
-    const { page = {} } = body;
-    const { skip = 0, limit = 20 } = page;
-    const categories = await CategoryModel.getCategoryChildren(categoryId, user.accessLevel, {
-      skip,
-      limit,
-    });
+    const categories = await CategoryModel.getCategoryChildren(
+      categoryId,
+      user.accessLevel,
+      convertPage(page, user),
+    );
 
     res.status(200).send({ payload: { categories } });
   } catch (err) {

@@ -14,6 +14,6 @@ router.post('/:topicId/comments', asyncMiddleware(addComment));
 
 router.get('/:topicId', asyncMiddleware(getTopicById));
 router.get('/:topicId/top', asyncMiddleware(getTopCommentByTopicId));
-router.get('/:topicId/comments', asyncMiddleware(getCommentsByTopicId));
+router.get('/:topicId/comments/page_:page', asyncMiddleware(getCommentsByTopicId));
 
 export default router;

@@ -38,7 +38,7 @@ app.use(`/api/v${process.env.API_VERSION}/auth`, authRouter);
 app.use(`/api/v${process.env.API_VERSION}/categories`, authenticate, categoryRouter);
 app.use(`/api/v${process.env.API_VERSION}/topics`, authenticate, topicRouter);
 app.use(`/api/v${process.env.API_VERSION}/users`, authenticate, userRouter);
-app.use(`/api/v${process.env.API_VERSION}`, indexRouter);
+app.use(`/api/v${process.env.API_VERSION}/`, indexRouter);
 
 // app.use('/uploads', express.static('uploads'));
 app.use(defaultErrorHandler);
