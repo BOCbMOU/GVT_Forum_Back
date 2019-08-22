@@ -2,6 +2,9 @@ import express from 'express';
 
 import asyncMiddleware from '../middlewares/asyncMiddleware';
 import {
+  updateSelfSettings,
+  updateSelfPassword,
+  updateUserByName,
   getSelf,
   getUserByName,
   getFullUserInfo,
@@ -12,7 +15,11 @@ import { getCommentsByUser } from '../controllers/commentController';
 
 const router = express.Router();
 
-router.get('/me', asyncMiddleware(getSelf));
+router.put('/self', asyncMiddleware(updateSelfSettings));
+router.put('/self/update-password', asyncMiddleware(updateSelfPassword));
+router.put('/:username', asyncMiddleware(updateUserByName));
+
+router.get('/self', asyncMiddleware(getSelf));
 router.get('/:username', asyncMiddleware(getUserByName));
 router.get('/:username/full-info', asyncMiddleware(getFullUserInfo));
 router.get('/:username/topics/page_:page', asyncMiddleware(getTopicsByUser));

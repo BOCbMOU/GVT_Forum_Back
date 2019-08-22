@@ -6,7 +6,7 @@ const logger = require('../utils/logger')('server');
 const connectToDB = session => {
   const MongoStore = mongo(session);
   mongoose.Promise = global.Promise;
-  mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true });
+  mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true, useFindAndModify: false });
   mongoose.connection.on('error', () => {
     logger.log('error', 'MongoDB connection error. Please make sure MongoDB is running.');
     process.exit();

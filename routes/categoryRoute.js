@@ -3,6 +3,7 @@ import express from 'express';
 import asyncMiddleware from '../middlewares/asyncMiddleware';
 import {
   addCategory,
+  updateCategory,
   getCategoryById,
   getTopCategories,
   getCategoryChildren,
@@ -13,6 +14,8 @@ const router = express.Router();
 
 router.post('/', asyncMiddleware(addCategory));
 router.post('/:categoryId', asyncMiddleware(addTopic));
+
+router.put('/:categoryId', asyncMiddleware(updateCategory));
 
 router.get('/page_:page', asyncMiddleware(getTopCategories));
 router.get('/:categoryId', asyncMiddleware(getCategoryById));

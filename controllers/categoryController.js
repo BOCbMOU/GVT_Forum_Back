@@ -1,5 +1,5 @@
 import * as CategoryModel from '../models/CategoryModel';
-import { SUPER_AL, ADD_CATEGORY_AL } from '../consts';
+import { ADD_CATEGORY_AL } from '../consts';
 import convertPage from '../utils/convertPage';
 import AppError from '../errors/AppError';
 
@@ -8,29 +8,101 @@ const logger = require('../utils/logger')('logController');
 const addCategory = async (req, res, next) => {
   try {
     const { user, body } = req;
+    const { category } = body;
+    const {
+      name,
+      description = null,
+      parentCategoryId = null,
+      viewAccessLevel = user.accessLevel,
+    } = category;
 
-    logger.log('info', 'addCategory: %j', { name: body.name, user: user.username });
+    logger.log('info', 'addCategory: %j', { name, user: user.username });
 
     if (user.accessLevel > ADD_CATEGORY_AL) {
       res.status(403).send('Low access level!');
       return;
     }
 
-    const { name, description = null, viewAccessLevel = SUPER_AL, parentCategoryId = null } = body;
-
     if (!name) {
       res.status(400).send('No data provided!');
       return;
     }
 
-    const category = await CategoryModel.addCategory({
+    let correctAccessLevel = viewAccessLevel;
+    if (parentCategoryId) {
+      const parentCategory = await CategoryModel.getCategoryById(
+        parentCategoryId,
+        user.accessLevel,
+      );
+      if (!parentCategory) {
+        res.status(404).send({ error: 'Unknown category ID!' });
+        return;
+      }
+      correctAccessLevel = Math.min(viewAccessLevel, parentCategory.viewAccessLevel);
+    }
+
+    const addedCategory = await CategoryModel.addCategory({
       name,
       description,
-      viewAccessLevel,
       parentCategoryId,
+      viewAccessLevel: correctAccessLevel,
     });
 
-    res.status(201).send({ payload: { category } });
+    res.status(201).send({ payload: { category: addedCategory } });
+  } catch (err) {
+    next(new AppError(err.message, 400));
+  }
+};
+
+const updateCategory = async (req, res, next) => {
+  try {
+    const { user, body, params } = req;
+    const { categoryId } = params;
+
+    logger.log('info', 'updateCategory: %j', { category: categoryId, user: user.username });
+
+    if (user.accessLevel > ADD_CATEGORY_AL) {
+      res.status(403).send({ error: 'Low access level!' });
+      return;
+    }
+
+    const oldCategory = await CategoryModel.getCategoryById(categoryId, user.accessLevel);
+
+    if (!oldCategory) {
+      res.status(404).send({ error: 'Unknown category ID!' });
+      return;
+    }
+
+    const { category } = body;
+    const {
+      name = oldCategory.name,
+      description = oldCategory.description,
+      parentCategoryId = oldCategory.parentCategoryId,
+      viewAccessLevel = oldCategory.viewAccessLevel,
+    } = category;
+
+    let correctAccessLevel = viewAccessLevel;
+    if (parentCategoryId) {
+      const parentCategory = await CategoryModel.getCategoryById(
+        parentCategoryId,
+        user.accessLevel,
+      );
+      if (!parentCategory) {
+        res.status(404).send({ error: 'Unknown parent category!' });
+        return;
+      }
+
+      correctAccessLevel = Math.min(viewAccessLevel, parentCategory.viewAccessLevel);
+    }
+
+    const updatedCategory = await CategoryModel.updateCategory(categoryId, {
+      name,
+      description,
+      parentCategoryId,
+      viewAccessLevel: correctAccessLevel,
+    });
+
+    res.status(202).send({ payload: { category: updatedCategory } });
   } catch (err) {
     next(new AppError(err.message, 400));
   }
@@ -108,4 +180,11 @@ const getCategoryChildren = async (req, res, next) => {
   }
 };
 
-export { addCategory, getCategoryById, getTopCategories, getCategoriesByName, getCategoryChildren };
+export {
+  addCategory,
+  updateCategory,
+  getCategoryById,
+  getTopCategories,
+  getCategoriesByName,
+  getCategoryChildren,
+};

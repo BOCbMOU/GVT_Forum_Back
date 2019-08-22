@@ -22,6 +22,8 @@ const TopicModel = mongoose.model('Topic', topicSchema);
 
 const addTopic = async model => new TopicModel(model).save();
 
+const updateTopic = async (_id, data) => TopicModel.findOneAndUpdate({ _id }, data);
+
 const getTopicById = async (_id, userAccessLevel) =>
   TopicModel.findOne({ _id, viewAccessLevel: { $gte: userAccessLevel } });
 
@@ -34,4 +36,4 @@ const getTopicsByCategoryId = async (categoryId, userAccessLevel, { skip, limit 
     limit,
   });
 
-export { addTopic, getTopicById, getTopicsByUser, getTopicsByCategoryId };
+export { addTopic, updateTopic, getTopicById, getTopicsByUser, getTopicsByCategoryId };

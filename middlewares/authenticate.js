@@ -1,6 +1,6 @@
 import jwt from 'jsonwebtoken';
 import AuthError from '../errors/AuthError';
-import { getUserByName } from '../models/UserModel';
+import { getUserByName as UserModelGetUserByName } from '../models/UserModel';
 import { UNAUTHORIZED_USER_OBJECT } from '../consts';
 
 const logger = require('../utils/logger')('authenticate');
@@ -32,7 +32,7 @@ const authenticate = async (req, res, next) => {
   }
 
   const { username } = decodedToken.data;
-  const user = await getUserByName(username);
+  const user = await UserModelGetUserByName(username);
   if (!user) {
     return next(new AuthError('No such user'));
   }

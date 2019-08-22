@@ -1,7 +1,7 @@
 import jwt from 'jsonwebtoken';
 import AppError from '../errors/AppError';
 import { BASE_USER_AL, TOKEN_EXPIRES_IN } from '../consts';
-import { addUser, getUserByEmail, comparePassword } from '../models/UserModel';
+import * as UserModel from '../models/UserModel';
 
 const logger = require('../utils/logger')('logController');
 
@@ -10,7 +10,7 @@ const signUp = async (req, res) => {
 
   const { username, email, rehashedPassword } = req.body;
 
-  await addUser({
+  await UserModel.addUser({
     username,
     email,
     accessLevel: BASE_USER_AL,
@@ -27,12 +27,12 @@ const signUp = async (req, res) => {
 const signIn = async (req, res) => {
   logger.log('debug', 'logIn: %j', req.body);
 
-  const { email, hashedPassword } = req.body;
-  const user = await getUserByEmail(email);
+  const { email, password } = req.body;
+  const user = await UserModel.getUserByEmail(email);
 
   if (user) {
-    const isPasswordsEqual = await comparePassword({
-      userPassword: hashedPassword,
+    const isPasswordsEqual = await UserModel.comparePassword({
+      userPassword: password,
       rehashedPassword: user.rehashedPassword,
     });
 
