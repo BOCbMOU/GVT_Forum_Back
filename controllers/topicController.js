@@ -112,7 +112,7 @@ const updateTopic = async (req, res, next) => {
       viewAccessLevel: correctAccessLevel,
     });
 
-    res.status(201).send({ payload: { topic: updatedTopic, comment: updatedComment } });
+    res.status(202).send({ payload: { topic: updatedTopic, comment: updatedComment } });
   } catch (err) {
     next(new AppError(err.message, 400));
   }

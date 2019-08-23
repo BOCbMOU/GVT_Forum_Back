@@ -1,7 +1,7 @@
-import { hash } from 'bcrypt';
 import * as UserModel from '../models/UserModel';
 import { ADMIN_AL, SUPER_AL, UNAUTHORIZED_USER_AL } from '../consts';
 import convertPage from '../utils/convertPage';
+import { hashPassword, comparePasswords } from '../utils/cryptPassword';
 import AppError from '../errors/AppError';
 
 const logger = require('../utils/logger')('logController');
@@ -9,13 +9,33 @@ const logger = require('../utils/logger')('logController');
 const updateSelfSettings = async (req, res, next) => {
   try {
     const { user, body } = req;
-    const { avatar = user.avatar, settings = user.settings } = body;
+    const { user: userUpdate } = body;
+    const { settings = user.settings } = userUpdate;
 
     logger.log('info', 'updateSelfSettings: %j', { user: user.username });
 
-    const updatedUser = await UserModel.updateUser(user.username, { avatar, settings });
+    if (user.accessLevel >= UNAUTHORIZED_USER_AL) {
+      res.status(403).send({ error: 'Low access level!' });
+      return;
+    }
 
-    res.status(202).send({ payload: { user: { username: updatedUser.username } } });
+    const updatedUser = await UserModel.updateUser(user.username, { settings });
+
+    res.status(202).send({ payload: { user: { username: updatedUser.username, settings } } });
+  } catch (err) {
+    next(new AppError(err.message, 400));
+  }
+};
+
+const updateSelfAvatar = async (req, res, next) => {
+  try {
+    const { user, avatar = user.avatar } = req;
+
+    logger.log('info', 'updateSelfAvatar: %j', { user: user.username });
+
+    const updatedUser = await UserModel.updateUser(user.username, { avatar });
+
+    res.status(202).send({ payload: { user: { username: updatedUser.username, avatar } } });
   } catch (err) {
     next(new AppError(err.message, 400));
   }
@@ -38,21 +58,14 @@ const updateSelfPassword = async (req, res, next) => {
       return;
     }
 
-    const isPasswordsEqual = await UserModel.comparePassword({
-      userPassword: oldPassword,
-      rehashedPassword: user.rehashedPassword,
-    });
+    const isPasswordsEqual = await comparePasswords(oldPassword, user.rehashedPassword);
 
     if (!isPasswordsEqual) {
       res.status(400).send({ error: 'Wrong password!' });
       return;
     }
 
-    // Didn't find a way to do it in "pre" in UserModel
-    const rehashedPassword = await hash(
-      newPassword,
-      parseInt(process.env.PASSWORD_HASHING_ROUNDS, 10),
-    );
+    const rehashedPassword = await hashPassword(newPassword);
 
     const updatedUser = await UserModel.updateUser(user.username, { rehashedPassword });
 
@@ -101,10 +114,7 @@ const updateUserByName = async (req, res, next) => {
     }
 
     if (newPassword) {
-      correctUserUpdate.rehashedPassword = await hash(
-        newPassword,
-        parseInt(process.env.PASSWORD_HASHING_ROUNDS, 10),
-      );
+      correctUserUpdate.rehashedPassword = await hashPassword(newPassword);
     }
 
     Object.entries(correctUserUpdate).forEach(([key, value]) => {
@@ -147,9 +157,9 @@ const getUserByName = async (req, res, next) => {
       return;
     }
 
-    const { avatar, createdAt } = user;
+    const { avatar, accessLevel, createdAt } = user;
 
-    res.status(200).send({ payload: { user: { username, avatar, createdAt } } });
+    res.status(200).send({ payload: { user: { username, avatar, accessLevel, createdAt } } });
   } catch (err) {
     next(new AppError(err.message, 400));
   }
@@ -169,9 +179,9 @@ const getUserByEmail = async (req, res, next) => {
       return;
     }
 
-    const { username, avatar, createdAt } = user;
+    const { username, avatar, accessLevel, createdAt } = user;
 
-    res.status(200).send({ payload: { user: { username, avatar, createdAt } } });
+    res.status(200).send({ payload: { user: { username, avatar, accessLevel, createdAt } } });
   } catch (err) {
     next(new AppError(err.message, 400));
   }
@@ -213,7 +223,7 @@ const getUsersByAccessLevel = async (req, res, next) => {
 
     const usersRes = users.map(user => {
       const { username, avatar, createdAt } = user;
-      return { username, avatar, createdAt };
+      return { username, avatar, accessLevel, createdAt };
     });
 
     res.status(200).send({ payload: { users: usersRes } });
@@ -224,6 +234,7 @@ const getUsersByAccessLevel = async (req, res, next) => {
 
 export {
   updateSelfSettings,
+  updateSelfAvatar,
   updateSelfPassword,
   updateUserByName,
   getSelf,

@@ -90,7 +90,7 @@ const updateComment = async (req, res, next) => {
       viewAccessLevel: correctAccessLevel,
     });
 
-    res.status(201).send({ payload: { comment: updatedComment } });
+    res.status(202).send({ payload: { comment: updatedComment } });
   } catch (err) {
     next(new AppError(err.message, 400));
   }

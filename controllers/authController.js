@@ -2,19 +2,20 @@ import jwt from 'jsonwebtoken';
 import AppError from '../errors/AppError';
 import { BASE_USER_AL, TOKEN_EXPIRES_IN } from '../consts';
 import * as UserModel from '../models/UserModel';
+import { hashPassword, comparePasswords } from '../utils/cryptPassword';
 
 const logger = require('../utils/logger')('logController');
 
 const signUp = async (req, res) => {
   logger.log('debug', 'register: %j', req.body);
 
-  const { username, email, rehashedPassword } = req.body;
+  const { username, email, password } = req.body;
 
   await UserModel.addUser({
     username,
     email,
     accessLevel: BASE_USER_AL,
-    rehashedPassword,
+    rehashedPassword: await hashPassword(password),
   }).catch(error => {
     throw new AppError(error.message, 400);
   });
@@ -31,10 +32,7 @@ const signIn = async (req, res) => {
   const user = await UserModel.getUserByEmail(email);
 
   if (user) {
-    const isPasswordsEqual = await UserModel.comparePassword({
-      userPassword: password,
-      rehashedPassword: user.rehashedPassword,
-    });
+    const isPasswordsEqual = await comparePasswords(password, user.rehashedPassword);
 
     if (isPasswordsEqual) {
       const token = jwt.sign({ data: { username: user.username } }, process.env.JWT_SECRET, {
@@ -48,7 +46,7 @@ const signIn = async (req, res) => {
     }
 
     logger.log('debug', 'Login failed: wrong password');
-    throw new AppError('Wrong password!', 400);
+    res.status(400).send({ error: 'Wrong user credentials!' });
   } else {
     logger.log('debug', 'Login failed');
     throw new AppError('Wrong user credentials!', 400);

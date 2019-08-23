@@ -1,4 +1,5 @@
 import express from 'express';
+import fileUpload from 'express-fileupload';
 import session from 'express-session';
 import bodyParser from 'body-parser';
 import cors from 'cors';
@@ -19,6 +20,12 @@ const app = express();
 const MongoStore = connectToDB(session);
 
 app.use(cors());
+app.use(
+  fileUpload({
+    limit: { fileSize: process.env.FILE_SIZE_LIMIT * 1024 * 1024 },
+    createParentPath: true,
+  }),
+);
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -40,7 +47,8 @@ app.use(`/api/v${process.env.API_VERSION}/topics`, authenticate, topicRouter);
 app.use(`/api/v${process.env.API_VERSION}/users`, authenticate, userRouter);
 app.use(`/api/v${process.env.API_VERSION}/`, indexRouter);
 
-// app.use('/uploads', express.static('uploads'));
+app.use('/public', express.static(`${__dirname}/public`));
+app.use(express.static(`${__dirname}/public`));
 app.use(defaultErrorHandler);
 
 const host = process.env[`HOST_${process.platform.toUpperCase()}`];

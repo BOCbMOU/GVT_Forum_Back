@@ -3,6 +3,7 @@ import express from 'express';
 import asyncMiddleware from '../middlewares/asyncMiddleware';
 import {
   updateSelfSettings,
+  updateSelfAvatar,
   updateSelfPassword,
   updateUserByName,
   getSelf,
@@ -12,9 +13,11 @@ import {
 } from '../controllers/userController';
 import { getTopicsByUser } from '../controllers/topicController';
 import { getCommentsByUser } from '../controllers/commentController';
+import { uploadAvatar } from '../middlewares/filesUpload';
 
 const router = express.Router();
 
+router.put('/self/avatar', uploadAvatar, asyncMiddleware(updateSelfAvatar));
 router.put('/self', asyncMiddleware(updateSelfSettings));
 router.put('/self/update-password', asyncMiddleware(updateSelfPassword));
 router.put('/:username', asyncMiddleware(updateUserByName));

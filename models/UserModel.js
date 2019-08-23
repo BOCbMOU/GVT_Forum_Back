@@ -1,5 +1,4 @@
 import mongoose from 'mongoose';
-import { hash, compare } from 'bcrypt';
 
 const userSchema = new mongoose.Schema(
   {
@@ -16,16 +15,6 @@ const userSchema = new mongoose.Schema(
   { timestamps: true },
 );
 
-userSchema.pre('save', async function callback(next) {
-  if (this.rehashedPassword) {
-    this.rehashedPassword = await hash(
-      this.rehashedPassword,
-      parseInt(process.env.PASSWORD_HASHING_ROUNDS, 10),
-    );
-  }
-  next();
-});
-
 const UserModel = mongoose.model('User', userSchema);
 
 const addUser = async model => new UserModel(model).save();
@@ -39,9 +28,6 @@ const getUserByEmail = async email => UserModel.findOne({ email });
 const getUsersByAccessLevel = async (accessLevel, { skip, limit }) =>
   UserModel.find({ accessLevel }, null, { skip, limit });
 
-const comparePassword = async ({ userPassword, rehashedPassword }) =>
-  compare(userPassword, rehashedPassword);
-
 UserModel.schema
   .path('username')
   .validate(async username => !(await getUserByName(username)), 'Username is already in use!');
@@ -50,12 +36,4 @@ UserModel.schema
   .path('email')
   .validate(async email => !(await getUserByEmail(email)), 'Email is already in use!');
 
-export {
-  addUser,
-  updateUser,
-  getUserByName,
-  getUserByEmail,
-  getUsersByAccessLevel,
-  comparePassword,
-  userSchema,
-};
+export { addUser, updateUser, getUserByName, getUserByEmail, getUsersByAccessLevel, userSchema };
