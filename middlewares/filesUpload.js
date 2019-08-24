@@ -48,7 +48,7 @@ const uploadAvatar = async (req, res, next) => {
     await mkdirp(`${__dirname}/..${filePath}`);
     filePath += '/avatar.jpeg';
 
-    await sharp(avatar.data)
+    sharp(avatar.data)
       .resize(AVATAR_SIZE, AVATAR_SIZE)
       .jpeg({ quality: 70 })
       .toFile(`${__dirname}/..${filePath}`);

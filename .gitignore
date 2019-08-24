@@ -8,6 +8,7 @@ logs/
 !logs/.gitkeep
 .env
 data/*
+public/
 public/*
 ./public/**
 !./public/.gitkeep
