@@ -21,7 +21,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"username\": \"Bear\",\n    \"email\": \"bear@email.com\",\n    \"rehashedPassword\": \"Bear\"\n}"
+							"raw": "{\n    \"username\": \"user\",\n    \"email\": \"user@email.com\",\n    \"rehashedPassword\": \"user\"\n}"
 						},
 						"url": {
 							"raw": "http://localhost:3001/api/v1/auth/sign-up",
@@ -77,7 +77,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"email\": \"bear@email.com\",\n    \"hashedPassword\": \"Bear\"\n}"
+							"raw": "{\n    \"email\": \"bear@email.com\",\n    \"password\": \"Bear1994\"\n}"
 						},
 						"url": {
 							"raw": "http://localhost:3001/api/v1/auth/sign-in",
@@ -107,7 +107,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "266d9824-2736-4ccf-9e2b-3bad8d642d60",
+								"id": "e0ebd67b-4e97-4a6e-b2a4-3b1bdef0eee6",
 								"exec": [
 									"pm.test(\"Status code is 201\", () => {",
 									"    pm.response.to.have.status(201);",
@@ -115,7 +115,7 @@
 									"",
 									"const jsonData = pm.response.json();",
 									"",
-									"pm.test(\"Correct search result\", () => {",
+									"pm.test(\"Correct add result\", () => {",
 									"    pm.expect(jsonData.payload).to.have.property('category');",
 									"});"
 								],
@@ -139,7 +139,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"name\": \"Main child test\",\n\t\"viewAccessLevel\": 9999,\n\t\"parentCategoryId\": \"5d5c38e7f298d525d8f9e3fb\"\n}"
+							"raw": "{\n\t\"name\": \"Third Main Category\",\n\t\"viewAccessLevel\": 9000\n}"
 						},
 						"url": {
 							"raw": "http://localhost:3001/api/v1/categories/",
@@ -153,6 +153,55 @@
 								"v1",
 								"categories",
 								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Category",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "e0ebd67b-4e97-4a6e-b2a4-3b1bdef0eee6",
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"type": "text",
+								"value": "Bearer {{boot_login}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"category\": {\n\t\t\"viewAccessLevel\": 9999\n\t}\n}"
+						},
+						"url": {
+							"raw": "http://localhost:3001/api/v1/categories/5d5c38e7f298d525d8f9e3fb",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3001",
+							"path": [
+								"api",
+								"v1",
+								"categories",
+								"5d5c38e7f298d525d8f9e3fb"
 							]
 						}
 					},
@@ -214,7 +263,7 @@
 							}
 						],
 						"url": {
-							"raw": "http://localhost:3001/api/v1/categories/",
+							"raw": "http://localhost:3001/api/v1/categories/page_1",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -224,7 +273,7 @@
 								"api",
 								"v1",
 								"categories",
-								""
+								"page_1"
 							]
 						}
 					},
@@ -250,7 +299,7 @@
 							}
 						],
 						"url": {
-							"raw": "http://localhost:3001/api/v1/categories/5d5c38e7f298d525d8f9e3fb/children",
+							"raw": "http://localhost:3001/api/v1/categories/5d5c38e7f298d525d8f9e3fb/children/page_1",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -261,7 +310,8 @@
 								"v1",
 								"categories",
 								"5d5c38e7f298d525d8f9e3fb",
-								"children"
+								"children",
+								"page_1"
 							]
 						}
 					},
@@ -287,7 +337,7 @@
 							}
 						],
 						"url": {
-							"raw": "http://localhost:3001/api/v1/categories/5d5c38e7f298d525d8f9e3fb/topics",
+							"raw": "http://localhost:3001/api/v1/categories/5d5c55ee686c4912a88b3f78/topics/page_1",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -297,8 +347,9 @@
 								"api",
 								"v1",
 								"categories",
-								"5d5c38e7f298d525d8f9e3fb",
-								"topics"
+								"5d5c55ee686c4912a88b3f78",
+								"topics",
+								"page_1"
 							]
 						}
 					},
@@ -347,10 +398,10 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"title\": \"Second topic\",\n\t\"viewAccessLevel\": 9999\n}"
+							"raw": "{\n\t\"topic\": {\n\t\t\"title\": \"New topic\",\n\t\t\"viewAccessLevel\": 9999,\n\t\t\"message\": \"Something interesting\"\n\t}\n}"
 						},
 						"url": {
-							"raw": "http://localhost:3001/api/v1/categories/5d5c55ee686c4912a88b3f78",
+							"raw": "http://localhost:3001/api/v1/categories/5d5d3759e8fe5126f43795b3",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -360,7 +411,64 @@
 								"api",
 								"v1",
 								"categories",
-								"5d5c55ee686c4912a88b3f78"
+								"5d5d3759e8fe5126f43795b3"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Topic",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "c1fa5e31-39ad-4f72-bee6-e4ce154686a1",
+								"exec": [
+									"pm.test(\"Status code is 201\", () => {",
+									"    pm.response.to.have.status(201);",
+									"});",
+									"",
+									"const jsonData = pm.response.json();",
+									"",
+									"pm.test(\"Correct search result\", () => {",
+									"    pm.expect(jsonData.payload).to.have.property('topic');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"type": "text",
+								"value": "Bearer {{boot_login}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"topic\":{\n\t\t\"title\": \"New topic Update 2\",\n\t\t\"message\": \"Something interesting Update 2\"\n\t}\n}"
+						},
+						"url": {
+							"raw": "http://localhost:3001/api/v1/topics/5d5ee2f59cb1351c2cf8e3b0",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3001",
+							"path": [
+								"api",
+								"v1",
+								"topics",
+								"5d5ee2f59cb1351c2cf8e3b0"
 							]
 						}
 					},
@@ -386,7 +494,7 @@
 							}
 						],
 						"url": {
-							"raw": "http://localhost:3001/api/v1/topics/5d5c5edb4b512528f4b549e2",
+							"raw": "http://localhost:3001/api/v1/topics/5d5ee2f59cb1351c2cf8e3b0",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -396,7 +504,7 @@
 								"api",
 								"v1",
 								"topics",
-								"5d5c5edb4b512528f4b549e2"
+								"5d5ee2f59cb1351c2cf8e3b0"
 							]
 						}
 					},
@@ -422,7 +530,7 @@
 							}
 						],
 						"url": {
-							"raw": "http://localhost:3001/api/v1/topics/5d5c5ec44b512528f4b549e1/top",
+							"raw": "http://localhost:3001/api/v1/topics/5d5ee2f59cb1351c2cf8e3b0/top",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -432,52 +540,8 @@
 								"api",
 								"v1",
 								"topics",
-								"5d5c5ec44b512528f4b549e1",
+								"5d5ee2f59cb1351c2cf8e3b0",
 								"top"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Get Topic Comments",
-					"protocolProfileBehavior": {
-						"disableBodyPruning": true
-					},
-					"request": {
-						"auth": {
-							"type": "noauth"
-						},
-						"method": "GET",
-						"header": [
-							{
-								"key": "Content-Type",
-								"type": "text",
-								"value": "application/json"
-							},
-							{
-								"key": "Authorization",
-								"type": "text",
-								"value": "Bearer {{boot_login}}"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n\t\"page\": {\n\t\t\"skip\": 0,\n\t\t\"limit\": 5\n\t}\n}"
-						},
-						"url": {
-							"raw": "http://localhost:3001/api/v1/topics/5d5c5ec44b512528f4b549e1/comments",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "3001",
-							"path": [
-								"api",
-								"v1",
-								"topics",
-								"5d5c5ec44b512528f4b549e1",
-								"comments"
 							]
 						}
 					},
@@ -526,10 +590,10 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"message\": \"Just new comment\",\n\t\"viewAccessLevel\": 9999\n}"
+							"raw": "{\n\t\"comment\": {\n\t\t\"message\": \"Just new comment\",\n\t\t\"viewAccessLevel\": 9999\n\t}\n}"
 						},
 						"url": {
-							"raw": "http://localhost:3001/api/v1/topics/5d5c5ec44b512528f4b549e1/comments",
+							"raw": "http://localhost:3001/api/v1/topics/5d5d7a6eaed4b82414a5a79a/comments",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -539,8 +603,111 @@
 								"api",
 								"v1",
 								"topics",
-								"5d5c5ec44b512528f4b549e1",
+								"5d5d7a6eaed4b82414a5a79a",
 								"comments"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Comment",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "c1fa5e31-39ad-4f72-bee6-e4ce154686a1",
+								"exec": [
+									"pm.test(\"Status code is 201\", () => {",
+									"    pm.response.to.have.status(201);",
+									"});",
+									"",
+									"const jsonData = pm.response.json();",
+									"",
+									"pm.test(\"Correct search result\", () => {",
+									"    pm.expect(jsonData.payload).to.have.property('comment');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"type": "text",
+								"value": "Bearer {{boot_login}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"comment\": {\n\t\t\"message\": \"Just new comment Update 2\"\n\t}\n}"
+						},
+						"url": {
+							"raw": "http://localhost:3001/api/v1/topics/comment/5d5ee4219cb1351c2cf8e3b2",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3001",
+							"path": [
+								"api",
+								"v1",
+								"topics",
+								"comment",
+								"5d5ee4219cb1351c2cf8e3b2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Topic Comments",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"type": "text",
+								"value": "Bearer {{boot_login}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"page\": {\n\t\t\"skip\": 0,\n\t\t\"limit\": 5\n\t}\n}"
+						},
+						"url": {
+							"raw": "http://localhost:3001/api/v1/topics/5d5d7a6eaed4b82414a5a79a/comments/page_1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3001",
+							"path": [
+								"api",
+								"v1",
+								"topics",
+								"5d5d7a6eaed4b82414a5a79a",
+								"comments",
+								"page_1"
 							]
 						}
 					},
@@ -551,6 +718,162 @@
 		{
 			"name": "Users",
 			"item": [
+				{
+					"name": "Update Self",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{boot_login}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"user\": {\n\t\t\"settings\": {\n\t\t\t\"pageSize\": 20\n\t\t}\n\t}\n}"
+						},
+						"url": {
+							"raw": "http://localhost:3001/api/v1/users/self",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3001",
+							"path": [
+								"api",
+								"v1",
+								"users",
+								"self"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Self Avatar",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{boot_login}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "avatar",
+									"type": "file",
+									"src": "/D:/Изображения/Обои/Космос/theVideoGameGallery_28449_4008x2212.jpg"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:3001/api/v1/users/self/avatar",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3001",
+							"path": [
+								"api",
+								"v1",
+								"users",
+								"self",
+								"avatar"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Self Password",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"type": "text",
+								"value": "Bearer {{boot_login}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"oldPassword\": \"Bear94\",\n\t\"newPassword\": \"Bear1994\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:3001/api/v1/users/self/update-password",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3001",
+							"path": [
+								"api",
+								"v1",
+								"users",
+								"self",
+								"update-password"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update User",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"type": "text",
+								"value": "Bearer {{boot_login}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"user\": {\n            \"settings\": {\n                \"pageSize\": 30\n            },\n            \"accessLevel\": 9000,\n            \"_id\": \"5d5e75d01f76050a3465040d\",\n            \"username\": \"user\",\n            \"email\": \"user@email.com\",\n            \"newPassword\": \"user1234\",\n            \"createdAt\": \"2019-08-22T11:00:32.780Z\",\n            \"updatedAt\": \"2019-08-22T12:20:05.174Z\",\n            \"__v\": 0\n        }\n}"
+						},
+						"url": {
+							"raw": "http://localhost:3001/api/v1/users/Bear",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3001",
+							"path": [
+								"api",
+								"v1",
+								"users",
+								"Bear"
+							]
+						}
+					},
+					"response": []
+				},
 				{
 					"name": "Get Self",
 					"request": {
@@ -571,7 +894,7 @@
 							}
 						],
 						"url": {
-							"raw": "http://localhost:3001/api/v1/users/me",
+							"raw": "http://localhost:3001/api/v1/users/self",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -581,7 +904,7 @@
 								"api",
 								"v1",
 								"users",
-								"me"
+								"self"
 							]
 						}
 					},
@@ -618,6 +941,43 @@
 								"v1",
 								"users",
 								"Bear"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Full User Info",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"type": "text",
+								"value": "Bearer {{boot_login}}"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:3001/api/v1/users/user/full-info",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3001",
+							"path": [
+								"api",
+								"v1",
+								"users",
+								"user",
+								"full-info"
 							]
 						}
 					},
@@ -705,13 +1065,13 @@
 	},
 	"variable": [
 		{
-			"id": "4b83a125-6a32-4a1b-9e37-c8d6d7e4eacd",
+			"id": "259a8f62-e1b1-4130-8d9f-ef46e1671168",
 			"key": "categoryId",
 			"value": "",
 			"type": "string"
 		},
 		{
-			"id": "7303c534-4a7b-4509-ad69-2b08d2524eb6",
+			"id": "84b16b57-5ac3-421a-9cbf-ebae2828f88e",
 			"key": "topicId",
 			"value": "",
 			"type": "string"
