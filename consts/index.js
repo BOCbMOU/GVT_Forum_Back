@@ -1,5 +1,6 @@
-export const UPLOAD_FOLDER = 'uploads/images';
 export const TOKEN_EXPIRES_IN = '6h';
+
+export const AVATAR_SIZE = 250;
 
 // Access Level (AL)
 export const BASE_USER_AL = 9000;
