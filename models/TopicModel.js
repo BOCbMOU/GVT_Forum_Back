@@ -28,12 +28,19 @@ const getTopicById = async (_id, userAccessLevel) =>
   TopicModel.findOne({ _id, viewAccessLevel: { $gte: userAccessLevel } });
 
 const getTopicsByUser = async (username, userAccessLevel, { skip, limit }) =>
-  TopicModel.find({ username, viewAccessLevel: { $gte: userAccessLevel } }, null, { skip, limit });
+  TopicModel.find({ username, viewAccessLevel: { $gte: userAccessLevel } }, null, {
+    skip,
+    limit,
+  }).sort({
+    updatedAt: -1,
+  });
 
 const getTopicsByCategoryId = async (categoryId, userAccessLevel, { skip, limit }) =>
   TopicModel.find({ categoryId, viewAccessLevel: { $gte: userAccessLevel } }, null, {
     skip,
     limit,
+  }).sort({
+    updatedAt: -1,
   });
 
 export { addTopic, updateTopic, getTopicById, getTopicsByUser, getTopicsByCategoryId };

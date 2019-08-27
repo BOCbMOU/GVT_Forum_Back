@@ -125,15 +125,17 @@ const getCategoryById = async (req, res, next) => {
 
 const getTopCategories = async (req, res, next) => {
   try {
-    const { user, params } = req;
-    const { page } = params;
+    const { user } = req;
+    // const { user, params } = req;
+    // const { page } = params;
 
     logger.log('info', 'getTopCategories: %j', { user: user.username });
 
-    const categories = await CategoryModel.getTopCategories(
-      user.accessLevel,
-      convertPage(page, user),
-    );
+    const categories = await CategoryModel.getTopCategories(user.accessLevel);
+    // const categories = await CategoryModel.getTopCategories(
+    //   user.accessLevel,
+    //   convertPage(page, user),
+    // );
 
     res.status(200).send({ payload: { categories } });
   } catch (err) {

@@ -31,12 +31,19 @@ const getTopCommentByTopicId = async (topicId, userAccessLevel) =>
   CommentModel.findOne({ topicId, viewAccessLevel: { $gte: userAccessLevel } });
 
 const getCommentsByTopicId = async (topicId, userAccessLevel, { skip, limit }) =>
-  CommentModel.find({ topicId, viewAccessLevel: { $gte: userAccessLevel } }, null, { skip, limit });
+  CommentModel.find({ topicId, viewAccessLevel: { $gte: userAccessLevel } }, null, {
+    skip,
+    limit,
+  }).sort({
+    createdAt: 1,
+  });
 
 const getCommentsByUser = async (username, userAccessLevel, { skip, limit }) =>
   CommentModel.find({ username, viewAccessLevel: { $gte: userAccessLevel } }, null, {
     skip,
     limit,
+  }).sort({
+    createdAt: 1,
   });
 
 export {

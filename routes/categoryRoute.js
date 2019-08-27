@@ -17,7 +17,7 @@ router.post('/:categoryId', asyncMiddleware(addTopic));
 
 router.put('/:categoryId', asyncMiddleware(updateCategory));
 
-router.get('/page_:page', asyncMiddleware(getTopCategories));
+router.get('/', asyncMiddleware(getTopCategories));
 router.get('/:categoryId', asyncMiddleware(getCategoryById));
 router.get('/:categoryId/children/page_:page', asyncMiddleware(getCategoryChildren));
 router.get('/:categoryId/topics/page_:page', asyncMiddleware(getTopicsByCategoryId));

@@ -26,7 +26,9 @@ const getUserByName = async username => UserModel.findOne({ username });
 const getUserByEmail = async email => UserModel.findOne({ email });
 
 const getUsersByAccessLevel = async (accessLevel, { skip, limit }) =>
-  UserModel.find({ accessLevel }, null, { skip, limit });
+  UserModel.find({ accessLevel }, null, { skip, limit }).sort({
+    createdAt: 1,
+  });
 
 UserModel.schema
   .path('username')

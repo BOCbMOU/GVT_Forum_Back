@@ -27,19 +27,25 @@ const updateCategory = async (_id, data) => CategoryModel.findOneAndUpdate({ _id
 const getCategoryById = async (_id, userAccessLevel) =>
   CategoryModel.findOne({ _id, viewAccessLevel: { $gte: userAccessLevel } });
 
-const getTopCategories = async (userAccessLevel, { skip, limit }) =>
-  CategoryModel.find({ parentCategoryId: null, viewAccessLevel: { $gte: userAccessLevel } }, null, {
-    skip,
-    limit,
+const getTopCategories = async userAccessLevel =>
+  CategoryModel.find({ parentCategoryId: null, viewAccessLevel: { $gte: userAccessLevel } }).sort({
+    createdAt: 1,
   });
 
 const getCategoriesByName = async (name, userAccessLevel, { skip, limit }) =>
-  CategoryModel.find({ name, viewAccessLevel: { $gte: userAccessLevel } }, null, { skip, limit });
+  CategoryModel.find({ name, viewAccessLevel: { $gte: userAccessLevel } }, null, {
+    skip,
+    limit,
+  }).sort({
+    createdAt: 1,
+  });
 
 const getCategoryChildren = async (parentCategoryId, userAccessLevel, { skip, limit }) =>
   CategoryModel.find({ parentCategoryId, viewAccessLevel: { $gte: userAccessLevel } }, null, {
     skip,
     limit,
+  }).sort({
+    createdAt: 1,
   });
 
 export {
