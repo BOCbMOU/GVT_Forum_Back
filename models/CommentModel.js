@@ -38,6 +38,9 @@ const getCommentsByTopicId = async (topicId, userAccessLevel, { skip, limit }) =
     createdAt: 1,
   });
 
+const getNumberOfCommentsByTopicId = async (topicId, userAccessLevel) =>
+  CommentModel.countDocuments({ topicId, viewAccessLevel: { $gte: userAccessLevel } });
+
 const getCommentsByUser = async (username, userAccessLevel, { skip, limit }) =>
   CommentModel.find({ username, viewAccessLevel: { $gte: userAccessLevel } }, null, {
     skip,
@@ -52,5 +55,6 @@ export {
   getCommentById,
   getTopCommentByTopicId,
   getCommentsByTopicId,
+  getNumberOfCommentsByTopicId,
   getCommentsByUser,
 };

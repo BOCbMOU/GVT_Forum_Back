@@ -1,6 +1,6 @@
 import jwt from 'jsonwebtoken';
 import AuthError from '../errors/AuthError';
-import { getUserByName as UserModelGetUserByName } from '../models/UserModel';
+import { getUserByName as UMGetUserByName } from '../models/UserModel';
 import { UNAUTHORIZED_USER_OBJECT } from '../consts';
 
 const logger = require('../utils/logger')('authenticate');
@@ -17,6 +17,9 @@ const authenticate = async (req, res, next) => {
   let token;
   if (authorization) {
     [, token] = authorization.split(' ');
+  } else {
+    req.user = UNAUTHORIZED_USER_OBJECT;
+    return next();
   }
 
   if (!token) {
@@ -27,14 +30,13 @@ const authenticate = async (req, res, next) => {
   const decodedToken = await jwtVerify(token);
 
   if (!(decodedToken && decodedToken.data && decodedToken.data.username)) {
-    req.user = UNAUTHORIZED_USER_OBJECT;
-    return next();
+    return next(new AuthError('Session ended!'));
   }
 
   const { username } = decodedToken.data;
-  const user = await UserModelGetUserByName(username);
+  const user = await UMGetUserByName(username);
   if (!user) {
-    return next(new AuthError('No such user'));
+    return next(new AuthError('No such user!'));
   }
 
   logger.log('debug', `${username} was successfully authenticated`);

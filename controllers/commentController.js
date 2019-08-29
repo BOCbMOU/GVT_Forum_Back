@@ -1,6 +1,6 @@
 import * as CommentModel from '../models/CommentModel';
 import { getTopicById as TMGetTopicById } from '../models/TopicModel';
-import { ADD_COMMENT_AL, MODERATOR_AL } from '../consts';
+import { ADD_COMMENT_AL, MODERATOR_AL, DEF_PAGE_SIZE } from '../consts';
 import convertPage from '../utils/convertPage';
 import AppError from '../errors/AppError';
 
@@ -137,13 +137,15 @@ const getCommentsByTopicId = async (req, res, next) => {
 
     logger.log('info', 'getCommentsByTopicId: %j', { topicId, user: user.username });
 
-    const comments = await CommentModel.getCommentsByTopicId(
+    const comments = CommentModel.getCommentsByTopicId(
       topicId,
       user.accessLevel,
       convertPage(page, user),
     );
+    const numberOf = await CommentModel.getNumberOfCommentsByTopicId(topicId, user.accessLevel);
+    const numberOfPages = Math.ceil(numberOf / (user.settings.pageSize || DEF_PAGE_SIZE));
 
-    res.status(200).send({ payload: { comments } });
+    res.status(200).send({ payload: { comments: await comments, numberOfPages } });
   } catch (err) {
     next(new AppError(err.message, 400));
   }

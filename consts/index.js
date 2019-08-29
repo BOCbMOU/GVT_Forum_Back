@@ -1,4 +1,4 @@
-export const TOKEN_EXPIRES_IN = '6h';
+export const TOKEN_EXPIRES_IN = '20h';
 
 export const AVATAR_SIZE = 250;
 

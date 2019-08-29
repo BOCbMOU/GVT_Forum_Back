@@ -166,15 +166,11 @@ const getCategoriesByName = async (req, res, next) => {
 const getCategoryChildren = async (req, res, next) => {
   try {
     const { user, params } = req;
-    const { categoryId, page } = params;
+    const { categoryId } = params;
 
     logger.log('info', 'getCategoryChildren: %j', { categoryId, user: user.username });
 
-    const categories = await CategoryModel.getCategoryChildren(
-      categoryId,
-      user.accessLevel,
-      convertPage(page, user),
-    );
+    const categories = await CategoryModel.getCategoryChildren(categoryId, user.accessLevel);
 
     res.status(200).send({ payload: { categories } });
   } catch (err) {

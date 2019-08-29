@@ -35,6 +35,9 @@ const getTopicsByUser = async (username, userAccessLevel, { skip, limit }) =>
     updatedAt: -1,
   });
 
+const getNumberOfTopicsByUser = async (username, userAccessLevel) =>
+  TopicModel.countDocuments({ username, viewAccessLevel: { $gte: userAccessLevel } });
+
 const getTopicsByCategoryId = async (categoryId, userAccessLevel, { skip, limit }) =>
   TopicModel.find({ categoryId, viewAccessLevel: { $gte: userAccessLevel } }, null, {
     skip,
@@ -43,4 +46,15 @@ const getTopicsByCategoryId = async (categoryId, userAccessLevel, { skip, limit 
     updatedAt: -1,
   });
 
-export { addTopic, updateTopic, getTopicById, getTopicsByUser, getTopicsByCategoryId };
+const getNumberOfTopicsByCategoryId = async (categoryId, userAccessLevel) =>
+  TopicModel.countDocuments({ categoryId, viewAccessLevel: { $gte: userAccessLevel } });
+
+export {
+  addTopic,
+  updateTopic,
+  getTopicById,
+  getTopicsByUser,
+  getNumberOfTopicsByUser,
+  getTopicsByCategoryId,
+  getNumberOfTopicsByCategoryId,
+};

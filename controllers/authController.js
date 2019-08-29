@@ -31,7 +31,7 @@ const signUp = async (req, res, next) => {
 
     logger.log('info', `Successfully registered: ${username}`);
 
-    res.status(201).send({ payload: { message: 'Successfully registered', user: username } });
+    res.status(201).send({ payload: { user: username } });
   } catch (err) {
     next(new AppError(err.message, 400));
   }
@@ -54,7 +54,7 @@ const signIn = async (req, res, next) => {
 
         logger.log('info', `Successfully logged in: ${user.username}`);
 
-        res.status(200).send({ payload: { message: 'Successfully logged in', token } });
+        res.status(200).send({ payload: { user: { token, settings: user.settings } } });
         return;
       }
 

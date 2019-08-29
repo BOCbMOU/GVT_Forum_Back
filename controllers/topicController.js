@@ -5,7 +5,7 @@ import {
   addComment as CMAddComment,
   updateComment as CMUpdateComment,
 } from '../models/CommentModel';
-import { ADD_TOPIC_AL, MODERATOR_AL } from '../consts';
+import { ADD_TOPIC_AL, MODERATOR_AL, DEF_PAGE_SIZE } from '../consts';
 import convertPage from '../utils//convertPage';
 import AppError from '../errors/AppError';
 
@@ -140,13 +140,10 @@ const getTopicsByUser = async (req, res, next) => {
 
     logger.log('info', 'getTopicsByUser: %j', { usernameTopics: username, user: user.username });
 
-    const topics = await TopicModel.getTopicsByUser(
-      username,
-      user.accessLevel,
-      convertPage(page, user),
-    );
+    const topics = TopicModel.getTopicsByUser(username, user.accessLevel, convertPage(page, user));
+    const numberOf = TopicModel.getNumberOfTopicsByUser(username, user.accessLevel);
 
-    res.status(200).send({ payload: { topics } });
+    res.status(200).send({ payload: { topics: await topics, numberOf: await numberOf } });
   } catch (err) {
     next(new AppError(err.message, 400));
   }
@@ -159,13 +156,15 @@ const getTopicsByCategoryId = async (req, res, next) => {
 
     logger.log('info', 'getTopicsByCategoryId: %j', { categoryId, user: user.username });
 
-    const topics = await TopicModel.getTopicsByCategoryId(
+    const topics = TopicModel.getTopicsByCategoryId(
       categoryId,
       user.accessLevel,
       convertPage(page, user),
     );
+    const numberOf = await TopicModel.getNumberOfTopicsByCategoryId(categoryId, user.accessLevel);
+    const numberOfPages = Math.ceil(numberOf / (user.settings.pageSize || DEF_PAGE_SIZE));
 
-    res.status(200).send({ payload: { topics } });
+    res.status(200).send({ payload: { topics: await topics, numberOfPages } });
   } catch (err) {
     next(new AppError(err.message, 400));
   }

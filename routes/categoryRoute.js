@@ -19,7 +19,7 @@ router.put('/:categoryId', asyncMiddleware(updateCategory));
 
 router.get('/', asyncMiddleware(getTopCategories));
 router.get('/:categoryId', asyncMiddleware(getCategoryById));
-router.get('/:categoryId/children/page_:page', asyncMiddleware(getCategoryChildren));
+router.get('/:categoryId/children', asyncMiddleware(getCategoryChildren));
 router.get('/:categoryId/topics/page_:page', asyncMiddleware(getTopicsByCategoryId));
 
 export default router;

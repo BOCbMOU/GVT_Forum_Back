@@ -40,11 +40,8 @@ const getCategoriesByName = async (name, userAccessLevel, { skip, limit }) =>
     createdAt: 1,
   });
 
-const getCategoryChildren = async (parentCategoryId, userAccessLevel, { skip, limit }) =>
-  CategoryModel.find({ parentCategoryId, viewAccessLevel: { $gte: userAccessLevel } }, null, {
-    skip,
-    limit,
-  }).sort({
+const getCategoryChildren = async (parentCategoryId, userAccessLevel) =>
+  CategoryModel.find({ parentCategoryId, viewAccessLevel: { $gte: userAccessLevel } }).sort({
     createdAt: 1,
   });
 
