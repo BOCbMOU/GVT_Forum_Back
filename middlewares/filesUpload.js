@@ -53,12 +53,6 @@ const uploadAvatar = async (req, res, next) => {
       .jpeg({ quality: 70 })
       .toFile(`${__dirname}/..${filePath}`);
 
-    // is already /avatar.jpeg
-    if (user.avatar) {
-      res.status(202).send({ payload: { user: { username: user.username, avatar: user.avatar } } });
-      return;
-    }
-
     req.avatar = filePath;
     next();
   } catch (err) {

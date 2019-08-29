@@ -35,7 +35,11 @@ const updateSelfAvatar = async (req, res, next) => {
 
     const updatedUser = await UserModel.updateUser(user.username, { avatar });
 
-    res.status(202).send({ payload: { user: { username: updatedUser.username, avatar } } });
+    res.status(202).send({
+      payload: {
+        user: { username: updatedUser.username, avatar, updatedAt: updatedUser.updatedAt },
+      },
+    });
   } catch (err) {
     next(new AppError(err.message, 400));
   }

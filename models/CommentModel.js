@@ -22,7 +22,8 @@ const CommentModel = mongoose.model('Comment', commentSchema);
 
 const addComment = async model => new CommentModel(model).save();
 
-const updateComment = async (_id, data) => CommentModel.findOneAndUpdate({ _id }, data);
+const updateComment = async (_id, data) =>
+  CommentModel.findOneAndUpdate({ _id }, data, { new: true });
 
 const getCommentById = async (_id, userAccessLevel) =>
   CommentModel.findOne({ _id, viewAccessLevel: { $gte: userAccessLevel } });

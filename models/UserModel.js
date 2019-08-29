@@ -19,7 +19,8 @@ const UserModel = mongoose.model('User', userSchema);
 
 const addUser = async model => new UserModel(model).save();
 
-const updateUser = async (username, update) => UserModel.findOneAndUpdate({ username }, update);
+const updateUser = async (username, update) =>
+  UserModel.findOneAndUpdate({ username }, update, { new: true });
 
 const getUserByName = async username => UserModel.findOne({ username });
 

@@ -22,7 +22,8 @@ const CategoryModel = mongoose.model('Category', categorySchema);
 
 const addCategory = async model => new CategoryModel(model).save();
 
-const updateCategory = async (_id, data) => CategoryModel.findOneAndUpdate({ _id }, data);
+const updateCategory = async (_id, data) =>
+  CategoryModel.findOneAndUpdate({ _id }, data, { new: true });
 
 const getCategoryById = async (_id, userAccessLevel) =>
   CategoryModel.findOne({ _id, viewAccessLevel: { $gte: userAccessLevel } });

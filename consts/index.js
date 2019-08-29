@@ -20,5 +20,6 @@ export const UNAUTHORIZED_USER_OBJECT = {
   username: 'UNAUTHORIZED',
   email: 'UNAUTHORIZED',
   accessLevel: UNAUTHORIZED_USER_AL,
+  settings: {},
 };
 export const DEF_PAGE_SIZE = 20;
