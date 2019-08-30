@@ -21,7 +21,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"username\": \"user\",\n    \"email\": \"user@email.com\",\n    \"rehashedPassword\": \"user\"\n}"
+							"raw": "{\n\t\"user\": {\n    \t\"username\": \"user\",\n    \t\"email\": \"user@email.com\",\n    \t\"password\": \"user\"\n\t}\n}"
 						},
 						"url": {
 							"raw": "http://localhost:3001/api/v1/auth/sign-up",
@@ -263,7 +263,7 @@
 							}
 						],
 						"url": {
-							"raw": "http://localhost:3001/api/v1/categories/page_1",
+							"raw": "http://localhost:3001/api/v1/categories/",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -273,7 +273,7 @@
 								"api",
 								"v1",
 								"categories",
-								"page_1"
+								""
 							]
 						}
 					},
@@ -299,7 +299,7 @@
 							}
 						],
 						"url": {
-							"raw": "http://localhost:3001/api/v1/categories/5d5c38e7f298d525d8f9e3fb/children/page_1",
+							"raw": "http://localhost:3001/api/v1/categories/5d5c38e7f298d525d8f9e3fb/children/",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -311,7 +311,7 @@
 								"categories",
 								"5d5c38e7f298d525d8f9e3fb",
 								"children",
-								"page_1"
+								""
 							]
 						}
 					},
@@ -494,7 +494,7 @@
 							}
 						],
 						"url": {
-							"raw": "http://localhost:3001/api/v1/topics/5d5ee2f59cb1351c2cf8e3b0",
+							"raw": "http://localhost:3001/api/v1/topics/5d5c5edb4b512528f4b549e2",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -504,7 +504,7 @@
 								"api",
 								"v1",
 								"topics",
-								"5d5ee2f59cb1351c2cf8e3b0"
+								"5d5c5edb4b512528f4b549e2"
 							]
 						}
 					},
@@ -695,7 +695,7 @@
 							"raw": "{\n\t\"page\": {\n\t\t\"skip\": 0,\n\t\t\"limit\": 5\n\t}\n}"
 						},
 						"url": {
-							"raw": "http://localhost:3001/api/v1/topics/5d5d7a6eaed4b82414a5a79a/comments/page_1",
+							"raw": "http://localhost:3001/api/v1/topics/5d5c5edb4b512528f4b549e2/comments/page_1",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -705,7 +705,7 @@
 								"api",
 								"v1",
 								"topics",
-								"5d5d7a6eaed4b82414a5a79a",
+								"5d5c5edb4b512528f4b549e2",
 								"comments",
 								"page_1"
 							]
@@ -930,7 +930,7 @@
 							}
 						],
 						"url": {
-							"raw": "http://localhost:3001/api/v1/users/Bear",
+							"raw": "http://localhost:3001/api/v1/users/user",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -940,7 +940,7 @@
 								"api",
 								"v1",
 								"users",
-								"Bear"
+								"user"
 							]
 						}
 					},
@@ -1065,13 +1065,13 @@
 	},
 	"variable": [
 		{
-			"id": "259a8f62-e1b1-4130-8d9f-ef46e1671168",
+			"id": "f181bd84-a342-415b-a7d6-409b437fe0d2",
 			"key": "categoryId",
 			"value": "",
 			"type": "string"
 		},
 		{
-			"id": "84b16b57-5ac3-421a-9cbf-ebae2828f88e",
+			"id": "85c69118-184b-4091-9868-da24cad7a4b2",
 			"key": "topicId",
 			"value": "",
 			"type": "string"
